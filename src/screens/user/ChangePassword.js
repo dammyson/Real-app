@@ -24,7 +24,7 @@ import Users from './user';
 
 
 
-export default class SignInScreen extends Component {
+export default class ChangePassword extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -89,15 +89,15 @@ export default class SignInScreen extends Component {
 
                                 <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 5, }}>
                                
-                                        <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 16, marginBottom: 2, marginTop: 2}}>  Sign UP</Text>
+                                        <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 16, marginBottom: 2, marginTop: 2}}>  Change Password</Text>
                                 </View>
 
                                 <View style={styles.textInputContainer}>
                                     <View style={styles.text_icon}>
-                                        <Icon
-                                            name="email"
+                                    <Icon
+                                            name="locked"
                                             size={20}
-                                            type='entypo'
+                                            type='fontisto'
                                             color={colors.primary_color}
 
                                         />
@@ -105,7 +105,7 @@ export default class SignInScreen extends Component {
 
                                     <View style={styles.input}>
                                         <TextInput
-                                            placeholder="Email "
+                                            placeholder="Code "
                                             placeholderTextColor='#fff'
 
                                             returnKeyType="next"
@@ -150,7 +150,7 @@ export default class SignInScreen extends Component {
 
                                     <View style={styles.input}>
                                         <TextInput
-                                            placeholder="Password "
+                                            placeholder="New Password "
                                             placeholderTextColor='#fff'
                                             returnKeyType="next"
                                             keyboardType="password"
@@ -196,7 +196,7 @@ export default class SignInScreen extends Component {
 
                                     <View style={styles.input}>
                                         <TextInput
-                                            placeholder="Confirm Password "
+                                            placeholder="Confirm New Password "
                                             placeholderTextColor='#fff'
                                             returnKeyType="next"
                                             keyboardType="password"
@@ -228,40 +228,16 @@ export default class SignInScreen extends Component {
                                         </TouchableOpacity>
                                     </View>
                                 </View>
-                                <View style={[styles.terms_container]}>
-                                    {!this.state.agree ?
-                                        <TouchableOpacity onPress={() => this.setState({ agree: true , show_terms_error: false })} style={[{height:15, width:15,  justifyContent: 'center', alignItems: 'center',}]}>
-                                            <Icon
-                                                name="checkbox-passive"
-                                                type='fontisto'
-                                                size={15}
-                                                color={"#d1d1d1"}
-                                            />
-                                        </TouchableOpacity>
-                                        :
-                                        <TouchableOpacity onPress={() => this.setState({ agree: false })} style={[{height:15, width:15,  justifyContent: 'center', alignItems: 'center', }]}>
-                                            <Icon
-                                                name="checkbox-active"
-                                                type='fontisto'
-                                                size={15}
-                                                color={"#d1d1d1"}
-                                            />
-                                        </TouchableOpacity>
-                                    }
-                                    <Text style={{ color: colors.white, fontSize: 12, fontWeight: '200', marginLeft: 5 }}>I have read and accepted the </Text>
-                                    <TouchableOpacity onPress={() => this.setState({ show_terms: true })} >
-                                        <Text style={{ color: colors.primary_color, fontSize: 12, fontWeight: '400' }}>Terms & Conditions  </Text>
-                                    </TouchableOpacity>
-                                </View>
+                              
                                 <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={['#ffcfa2', '#88725e']} style={styles.buttonContainer} block iconLeft>
                                     <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() => this.setState({ pin: true })} >
-                                        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#415c5a', fontSize: 14 }}>Create account</Text>
+                                        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#415c5a', fontSize: 14 }}>Continue</Text>
                                     </TouchableOpacity>
                                 </LinearGradient>
 
                                 <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 10, }}>
                                     <View style={{ alignItems: 'center' }}>
-                                        <Text style={{ color: '#d1d1d1', fontFamily: 'Poppins-Medium', fontSize: 12, marginBottom: 7, marginTop: 7 }}>Already a member?</Text>
+                                        <Text style={{ color: '#d1d1d1', fontFamily: 'Poppins-Medium', fontSize: 12, marginBottom: 7, marginTop: 7 }}>Want to cancel this ?</Text>
                                     </View>
                                     <TouchableOpacity onPress={() =>this.props.navigation.navigate('SignIn')} style={{ alignItems: 'center' }}>
                                         <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 13, marginBottom: 7, marginTop: 7 }}>  Sign In!</Text>
