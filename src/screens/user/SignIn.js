@@ -8,7 +8,8 @@ import {
     StyleSheet,
     StatusBar,
     Alert,
-    Dimensions
+    Dimensions,
+    AsyncStorage
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
@@ -18,7 +19,7 @@ import colors from '../../components/theme/colors'
 import { Container, Content } from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
 
-
+import { baseUrl, processResponse } from '../../components/utilities';
 
 import Users from './user';
 
@@ -33,15 +34,10 @@ export default class SignInScreen extends Component {
             failed: false,
             pin: false,
             items: [],
-            qty: 0,
-            amount: 0,
-            balance: 0,
-            code: [],
             operation_message: '',
-            name: '',
-            show_share: false,
+            email: 'voecmanager@yahoo.com',
+            password: '12345678',
             details: '',
-            is_donor: false,
             is_valide_mail: false,
             secureTextEntry: true
         };
@@ -65,6 +61,64 @@ export default class SignInScreen extends Component {
     updateSecureTextEntry = () => {
       this.setState({secureTextEntry: this.state.secureTextEntry ? false : true})
     }
+
+
+
+    async loginRequest() {
+
+
+        const { email, password, token } = this.state
+    
+        if (email == "") {
+          Alert.alert('Validation failed', 'Phone field cannot be empty', [{ text: 'Okay' }])
+          return
+        } else {
+          
+    
+        }
+        this.setState({ loading: true })
+       
+
+        var formData = JSON.stringify({
+            email: email,
+            password: password,
+            rememberMe: true,
+        });
+    
+        this.setState({ loading: true })
+        fetch(baseUrl() + 'auth', {
+          method: 'POST', headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          }, body: formData,
+        })
+          .then(processResponse)
+          .then(res => {
+           
+            this.setState({ loading: false })
+            const { statusCode, data } = res;
+            console.warn(data)
+            if (statusCode === 200) {
+             
+              AsyncStorage.setItem('login', 'yes');
+              AsyncStorage.setItem('access_token', data.access_token);
+              AsyncStorage.setItem('refresh_token', data.refresh_token);
+                // this.props.navigation.navigate('')}
+            
+            } else if (statusCode === 422) {
+              Alert.alert('Validation failed', 'Phone number already exits', [{ text: 'Okay' }])
+            } else {
+              Alert.alert('Operarion failed', 'Please checnk your phone number and retry', [{ text: 'Okay' }])
+            }
+          })
+          .catch((error) => {
+            console.warn(error);
+            alert(error.message);
+            this.setState({ loading: false })
+          });
+    
+    
+      }
 
 
     render() {
@@ -187,7 +241,7 @@ export default class SignInScreen extends Component {
                                     </TouchableOpacity>
                                 </View>
                                 <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={['#ffcfa2', '#88725e']} style={styles.buttonContainer} block iconLeft>
-                                    <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() => this.setState({ pin: true })} >
+                                    <TouchableOpacity style={{ flex: 1, justifyContent: 'center',  alignItems: 'center', }} onPress={() => this.loginRequest()} >
                                         <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#415c5a', fontSize: 14 }}>Log in</Text>
                                     </TouchableOpacity>
                                 </LinearGradient>
