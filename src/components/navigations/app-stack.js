@@ -8,6 +8,7 @@ import SignIn from '../../screens/user/SignIn';
 import Welcome from '../../screens/onBoarding/Welcome';
 import ForgetPassword from '../../screens/user/ForgetPassword';
 import ChangePassword from '../../screens/user/ChangePassword';
+import Protected from '../../screens/user/Protected';
 
 
 
@@ -28,7 +29,7 @@ class AppStack extends Component {
               headerStyle: { backgroundColor: '#7862ff' }, 
               headerShown: false,
              }}
-             initialRouteName="Splash">
+             initialRouteName="Protected">
 
             <Stack.Screen name="Splash" component={Splash}  />
             <Stack.Screen name="Welcome" component={Welcome}  />
@@ -36,6 +37,7 @@ class AppStack extends Component {
             <Stack.Screen name="SignUP" component={SignUP}  />
             <Stack.Screen name="ForgetPassword" component={ForgetPassword}  />
             <Stack.Screen name="ChangePassword" component={ChangePassword}  />
+            <Stack.Screen name="Protected" component={Protected}  />
         
           </Stack.Navigator>
         </NavigationContainer>

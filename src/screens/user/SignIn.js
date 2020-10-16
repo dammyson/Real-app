@@ -105,9 +105,8 @@ export default class SignInScreen extends Component {
                                         <TextInput
                                             placeholder="Email "
                                             placeholderTextColor='#fff'
-
                                             returnKeyType="next"
-                                            keyboardType="numeric"
+                                            keyboardType='email-address'
                                             autoCapitalize="none"
                                             autoCorrect={false}
                                             style={{ flex: 1, fontSize: 12, color: '#d1d1d1', fontFamily: 'Poppins-SemiBold', }}
@@ -187,7 +186,7 @@ export default class SignInScreen extends Component {
                                     </TouchableOpacity>
                                 </View>
                                 <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={['#ffcfa2', '#88725e']} style={styles.buttonContainer} block iconLeft>
-                                    <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() => this.setState({ pin: true })} >
+                                    <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() =>this.props.navigation.navigate('Protected')} >
                                         <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#415c5a', fontSize: 14 }}>Log in</Text>
                                     </TouchableOpacity>
                                 </LinearGradient>

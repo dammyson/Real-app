@@ -107,9 +107,8 @@ export default class SignInScreen extends Component {
                                         <TextInput
                                             placeholder="Email "
                                             placeholderTextColor='#fff'
-
                                             returnKeyType="next"
-                                            keyboardType="numeric"
+                                            keyboardType='email-address'
                                             autoCapitalize="none"
                                             autoCorrect={false}
                                             style={{ flex: 1, fontSize: 12, color: '#d1d1d1', fontFamily: 'Poppins-SemiBold', }}
