@@ -4,12 +4,11 @@ import {
     Text,
     TouchableOpacity,
     TextInput,
-    Platform,
+    AsyncStorage,
     StyleSheet,
     StatusBar,
     Alert,
-    Dimensions,
-    AsyncStorage
+    Dimensions
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
@@ -18,76 +17,62 @@ import LottieView from 'lottie-react-native';
 import colors from '../../components/theme/colors'
 import { Container, Content } from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
+import { useTheme } from 'react-native-paper';
 
-import { baseUrl, processResponse } from '../../components/utilities';
 
 import Users from './user';
 import ActivityIndicator from '../../components/views/ActivityIndicator';
+import { baseUrl, processResponse } from '../../components/utilities';
 
 
-
-export default class SignInScreen extends Component {
+export default class SignUpTwo extends Component {
     constructor(props) {
         super(props);
         this.state = {
             loading: false,
-            done: false,
-            failed: false,
-            pin: false,
-            items: [],
             operation_message: '',
+            fname: '',
+            lname: '',
+            phone: '',
             email: '',
             password: '',
-            details: '',
-            is_valide_mail: false,
-            secureTextEntry: true
+            phone: '',
         };
     }
 
 
-    validate = (text) => {
-        console.log(text);
-        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-        if (reg.test(text) === false) {
-            this.setState({ email: text, is_valide_mail: false })
-            return false;
-        }
-        else {
-            this.setState({ email: text, is_valide_mail: true })
 
-        }
+    async componentDidMount() {
+        const { email, password, confirm_password } = this.props.route.params;
+        this.setState({ email: email, password: password, confirm_password: confirm_password })
     }
 
-    updateSecureTextEntry = () => {
-      this.setState({secureTextEntry: this.state.secureTextEntry ? false : true})
-    }
+    async SignUpRequest() {
 
 
-
-    async loginRequest() {
-
-
-        const { email, password, is_valide_mail } = this.state
+        const { email, password, confirm_password, phone, lname,fname } = this.state
     
-        if (email == "" || password == ""  || password.length < 8) {
+        if (phone == "" || lname == ""  || fname == '') {
           Alert.alert('Validation failed', 'Phone field cannot be empty', [{ text: 'Okay' }])
           return
         } 
-        if (!is_valide_mail) {
-            Alert.alert('Validation failed', 'Email is invalid', [{ text: 'Okay' }])
-            return
-          } 
+       
         this.setState({ loading: true })
        
 
         var formData = JSON.stringify({
             email: email,
+            userName: fname,
+            firstName: fname,
+            lastName: lname,
+            phoneNumber: phone,
             password: password,
-            rememberMe: true,
+            password_confirmation: confirm_password,
+            clientBaseUrl: 'https://lottiefiles.com/search?q=loading+house&category=animations&animations-page=3',
         });
     
         this.setState({ loading: true })
-        fetch(baseUrl() + 'auth', {
+        fetch(baseUrl() + 'users', {
           method: 'POST', headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',
@@ -100,17 +85,16 @@ export default class SignInScreen extends Component {
             const { statusCode, data } = res;
             console.warn(data)
             if (statusCode === 200) {
-             
-              AsyncStorage.setItem('login', 'yes');
-              AsyncStorage.setItem('user_id', data.id);
-              AsyncStorage.setItem('access_token', data.access_token);
-              AsyncStorage.setItem('refresh_token', data.refresh_token);
-              this.props.navigation.navigate('Protected')
+                AsyncStorage.setItem('user_id', data.id);
+                this.props.navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'SignIn' }],
+                });
             
             } else if (statusCode === 422) {
-              Alert.alert('Validation failed', 'Phone number already exits', [{ text: 'Okay' }])
+              Alert.alert('Validation failed', data.message, [{ text: 'Okay' }])
             } else {
-              Alert.alert('Operarion failed', 'Please checnk your phone number and retry', [{ text: 'Okay' }])
+              Alert.alert('Operarion failed', data.message, [{ text: 'Okay' }])
             }
           })
           .catch((error) => {
@@ -137,19 +121,47 @@ export default class SignInScreen extends Component {
 
 
                                 <View style={styles.sideContent}>
-                                    <LottieView style={{ width: 250 }}
+                                    <LottieView style={{ width: 180 }}
                                         source={require('./house.json')} autoPlay loop
                                     />
                                 </View>
+
                                 <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 5, }}>
                                
-                               <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 16, marginBottom: 2, marginTop: 2}}>  Sign In</Text>
-                       </View>
+                                        <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 16, marginBottom: 2, marginTop: 2}}>Complete  Sign Up</Text>
+                                </View>
 
                                 <View style={styles.textInputContainer}>
                                     <View style={styles.text_icon}>
                                         <Icon
-                                            name="email"
+                                            name="mobile-phone"
+                                            size={23}
+                                            type='font-awesome'
+                                            color={colors.primary_color}
+
+                                        />
+                                    </View>
+
+                                    <View style={styles.input}>
+                                        <TextInput
+                                            placeholder="Phone "
+                                            placeholderTextColor='#fff'
+                                            returnKeyType="next"
+                                            keyboardType='numeric'
+                                            autoCapitalize="none"
+                                            autoCorrect={false}
+                                            style={{ flex: 1, fontSize: 12, color: '#d1d1d1', fontFamily: 'Poppins-SemiBold', }}
+                                            onChangeText={(text) => this.setState({phone: text})}
+                                            onSubmitEditing={() => this.fnameInput.focus()}
+                                        />
+                                    </View>
+
+                                </View>
+
+                                <View style={styles.textInputContainer}>
+                                    <View style={styles.text_icon}>
+                                        <Icon
+                                            name="user"
                                             size={20}
                                             type='entypo'
                                             color={colors.primary_color}
@@ -159,43 +171,28 @@ export default class SignInScreen extends Component {
 
                                     <View style={styles.input}>
                                         <TextInput
-                                            placeholder="Email "
+                                            placeholder="First Name "
                                             placeholderTextColor='#fff'
                                             returnKeyType="next"
                                             keyboardType='email-address'
                                             autoCapitalize="none"
                                             autoCorrect={false}
                                             style={{ flex: 1, fontSize: 12, color: '#d1d1d1', fontFamily: 'Poppins-SemiBold', }}
-                                            onChangeText={(text) => this.validate(text)}
+                                            ref={(input)=> this.fnameInput = input}
+                                            onChangeText={(text) => this.setState({fname: text})}
+                                            onSubmitEditing={() => this.lnameInput.focus()}
+
                                         />
                                     </View>
 
-
-                                    <View style={styles.operation_icon}>
-                                        {this.state.is_valide_mail ?
-                                            <Animatable.View
-                                                animation="bounceIn"
-                                            >
-                                                <Icon
-                                                    name="check-circle"
-                                                    color="green"
-                                                    size={20}
-                                                    type='feather'
-
-
-                                                />
-                                            </Animatable.View>
-                                            : null}
-
-                                    </View>
                                 </View>
 
                                 <View style={styles.textInputContainer}>
                                     <View style={styles.text_icon}>
                                         <Icon
-                                            name="locked"
+                                            name="user"
                                             size={20}
-                                            type='fontisto'
+                                            type='entypo'
                                             color={colors.primary_color}
 
                                         />
@@ -203,56 +200,32 @@ export default class SignInScreen extends Component {
 
                                     <View style={styles.input}>
                                         <TextInput
-                                            placeholder="Password "
+                                            placeholder="Last Name "
                                             placeholderTextColor='#fff'
                                             returnKeyType="next"
-                                            keyboardType="password"
-                                            secureTextEntry={this.state.secureTextEntry}
+                                            keyboardType='email-address'
                                             autoCapitalize="none"
                                             autoCorrect={false}
                                             style={{ flex: 1, fontSize: 12, color: '#d1d1d1', fontFamily: 'Poppins-SemiBold', }}
-                                            onChangeText={text => this.setState({ password: text })}
+                                            ref={(input)=> this.lnameInput = input}
+                                            onChangeText={(text) => this.setState({lname: text})}
+                                            onSubmitEditing={() => this.SignUpRequest()}
                                         />
                                     </View>
 
-                                    <View style={styles.operation_icon}>
-                                        <TouchableOpacity
-                                            onPress={() => this.updateSecureTextEntry()}
-                                        >
-                                            {!this.state.secureTextEntry ?
-                                                <Feather
-                                                    name="eye-off"
-                                                    color="grey"
-                                                    size={20}
-                                                />
-                                                :
-                                                <Feather
-                                                    name="eye"
-                                                    color="grey"
-                                                    size={20}
-                                                />
-                                            }
-                                        </TouchableOpacity>
-                                    </View>
                                 </View>
 
-                                <View style={{ marginLeft: 20, marginRight: 20, flexDirection: 'row', marginBottom: 1, }}>
-                                    <TouchableOpacity onPress={() => this.props.navigation.navigate('ForgetPassword')} style={{ flex: 1, alignItems: 'center' }}>
-                                        <Text style={{ color: '#d1d1d1', fontFamily: 'Poppins-Medium', fontSize: 12, marginBottom: 7, marginTop: 7 }}>Can't log in?</Text>
-                                    </TouchableOpacity>
-                                </View>
+                             
                                 <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={['#ffcfa2', '#88725e']} style={styles.buttonContainer} block iconLeft>
-                                    <TouchableOpacity style={{ flex: 1, justifyContent: 'center',  alignItems: 'center', }} onPress={() => this.loginRequest()} >
-                                        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#415c5a', fontSize: 14 }}>Log in</Text>
+                                    <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() => this.SignUpRequest()} >
+                                        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#415c5a', fontSize: 14 }}>Create account</Text>
                                     </TouchableOpacity>
                                 </LinearGradient>
 
-                                <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 10, }}>
-                                    <View style={{ alignItems: 'center' }}>
-                                        <Text style={{ color: '#d1d1d1', fontFamily: 'Poppins-Medium', fontSize: 12, marginBottom: 7, marginTop: 7 }}>Not a member?</Text>
-                                    </View>
-                                    <TouchableOpacity onPress={() =>this.props.navigation.navigate('SignUP')} style={{ alignItems: 'center' }}>
-                                        <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 13, marginBottom: 7, marginTop: 7 }}>  Join Now!</Text>
+                                <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 10, marginTop:10 }}>
+                                   
+                                    <TouchableOpacity onPress={() =>this.props.navigation.goBack()} style={{ alignItems: 'center' }}>
+                                        <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 13, marginBottom: 7, marginTop: 7 }}> Previous</Text>
                                     </TouchableOpacity>
                                 </View>
 
@@ -333,5 +306,14 @@ const styles = StyleSheet.create({
         marginLeft: 30,
         marginTop: 13,
         borderRadius: 15,
+    },
+    terms_container: {
+        flexDirection: 'row',
+        marginLeft: 30,
+        marginRight: 30,
+        marginTop: 10,
+        marginBottom: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });

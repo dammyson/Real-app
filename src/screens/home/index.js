@@ -1,43 +1,220 @@
 import React from 'react';
 import {
-  View,
   Text,
-  TouchableOpacity,
-  Dimensions,
-  StyleSheet,
-  StatusBar,
+  View,
   Image,
-  Animated, 
-  Easing
+  StatusBar,
+  Modal,
+  Animated,
+  Platform,
 } from 'react-native';
+import StickyParallaxHeader from 'react-native-sticky-parallax-header';
+import { constants, colors, sizes } from '../../constants';
+import styles from './HomeScreen.styles';
 
+import { QuizListElement, UserModal } from '../../components';
 
+import { Brandon, Jennifer, Ewa } from '../../assets/data/cards';
 
+const { event, ValueXY } = Animated;
+export default class HomeScreen extends React.Component {
+  constructor(props) {
+    super(props);
 
-
-export default class index extends React.Component {
-
-  componentDidMount() {
-   
+    this.state = {
+      headerLayout: {
+        height: 0,
+      },
+      contentHeight: {},
+      modalVisible: false,
+    };
+    this.scrollY = new ValueXY();
   }
 
+  componentDidMount() {
+    this.scrollY.y.addListener(({ value }) => (this._value = value));
+  }
+
+  componentWillUnmount() {
+    this.scrollY.y.removeListener();
+  }
+
+  setModalVisible = (visible) => {
+    this.setState({ modalVisible: visible });
+  };
+
+  setHeaderSize = (headerLayout) => this.setState({ headerLayout });
+
+  openUserModal = (userSelected) => {
+    this.setState({ userSelected }, () => this.setModalVisible(true));
+  };
+
+  scrollPosition = (value) => {
+    const { headerLayout } = this.state;
+
+    return constants.scrollPosition(headerLayout.height, value);
+  };
+
+  renderHeader = () => (
+    <View style={[styles.headerWrapper, styles.homeScreenHeader]}>
+      <Image
+        resizeMode="contain"
+        source={require('../../assets/logo.png')}
+        style={styles.logo}
+      />
+    </View>
+  );
+
+  renderForeground = () => {
+    const message = "Mornin' Mark! \nReady for a quiz?";
+    const startSize = constants.responsiveWidth(18);
+    const endSize = constants.responsiveWidth(10);
+    const [startImgFade, finishImgFade] = [
+      this.scrollPosition(22),
+      this.scrollPosition(27),
+    ];
+    const [startImgSize, finishImgSize] = [
+      this.scrollPosition(20),
+      this.scrollPosition(30),
+    ];
+    const [startTitleFade, finishTitleFade] = [
+      this.scrollPosition(25),
+      this.scrollPosition(45),
+    ];
+
+    const imageOpacity = this.scrollY.y.interpolate({
+      inputRange: [0, startImgFade, finishImgFade],
+      outputRange: [1, 1, 0],
+      extrapolate: 'clamp',
+    });
+    const imageSize = this.scrollY.y.interpolate({
+      inputRange: [0, startImgSize, finishImgSize],
+      outputRange: [startSize, startSize, endSize],
+      extrapolate: 'clamp',
+    });
+    const titleOpacity = this.scrollY.y.interpolate({
+      inputRange: [0, startTitleFade, finishTitleFade],
+      outputRange: [1, 1, 0],
+      extrapolate: 'clamp',
+    });
+
+    return (
+      <View style={styles.foreground}>
+        <Animated.View style={{ opacity: imageOpacity }}>
+        <Image
+        resizeMode="contain"
+        source={require('../../assets/logo.png')}
+        style={styles.logo}
+      />
+        </Animated.View>
+      </View>
+    );
+  };
+
+  renderQuizElements = (title) => {
+    const users = [Brandon, Jennifer, Ewa];
+    const {
+      navigation: { navigate },
+    } = this.props;
+
+    return users.map(
+      (user) =>
+        (title === 'Popular Quizes' || title === user.type) && (
+          <QuizListElement
+            key={user.id}
+            elements={user.cardsAmount}
+            authorName={user.author}
+            mainText={user.label}
+            labelText={user.type}
+            imageSource={user.image}
+            onPress={() => navigate('Card', { user })}
+            pressUser={() => this.openUserModal(user)}
+          />
+        )
+    );
+  };
+
+  calcMargin = (title) => {
+    const { contentHeight } = this.state;
+    let marginBottom = 50;
+
+    if (contentHeight[title]) {
+      const padding = 24;
+      const isBigContent = constants.deviceHeight - contentHeight[title] < 0;
+
+      if (isBigContent) {
+        return marginBottom;
+      }
+
+      marginBottom =
+        constants.deviceHeight -
+        padding * 2 -
+        sizes.headerHeight -
+        contentHeight[title];
+
+      return marginBottom > 0 ? marginBottom : 0;
+    }
+
+    return marginBottom;
+  };
+
+  onLayoutContent = (e, title) => {
+    const { contentHeight } = this.state;
+    const contentHeightTmp = { ...contentHeight };
+    contentHeightTmp[title] = e.nativeEvent.layout.height;
+
+    this.setState({
+      contentHeight: { ...contentHeightTmp },
+    });
+  };
+
+  renderContent = (title) => {
+    const marginBottom = Platform.select({
+      ios: this.calcMargin(title),
+      android: 0,
+    });
+
+    return (
+      <View
+        onLayout={(e) => this.onLayoutContent(e, title)}
+        style={[styles.content, { marginBottom }]}
+      >
+    
+        <Text style={styles.contentText}>{title}</Text>
+        {this.renderQuizElements(title)}
+      </View>
+    );
+  };
 
   render() {
     return (
-      <View style={styles.container}>
-        <StatusBar backgroundColor='#415c5a' barStyle="light-content" />
-       <Text>Home</Text>
-      </View>
+      <React.Fragment>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor={colors.primaryGreen}
+          translucent
+        />
+        <StickyParallaxHeader
+          foreground={this.renderForeground()}
+          header={this.renderHeader()}
+          
+          deviceWidth={constants.deviceWidth}
+          parallaxHeight={sizes.homeScreenParallaxHeader}
+          scrollEvent={event(
+            [{ nativeEvent: { contentOffset: { y: this.scrollY.y } } }],
+            { useNativeDriver: false }
+          )}
+          headerSize={this.setHeaderSize}
+          headerHeight={sizes.headerHeight}
+          tabTextStyle={styles.tabText}
+          tabTextContainerStyle={styles.tabTextContainerStyle}
+          tabTextContainerActiveStyle={styles.tabTextContainerActiveStyle}
+          tabsContainerBackgroundColor={colors.primaryGreen}
+          tabsWrapperStyle={styles.tabsWrapper}
+        >
+          {this.renderContent('Popular Quizes')}
+        </StickyParallaxHeader>
+      </React.Fragment>
     );
   }
 }
-
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#415c5a'
-  },
-  
-});

@@ -9,6 +9,7 @@ import Welcome from '../../screens/onBoarding/Welcome';
 import ForgetPassword from '../../screens/user/ForgetPassword';
 import ChangePassword from '../../screens/user/ChangePassword';
 import Protected from '../../screens/user/Protected';
+import SignUpTwo from '../../screens/user/SignUpTwo';
 
 
 
@@ -35,6 +36,7 @@ class AppStack extends Component {
             <Stack.Screen name="Welcome" component={Welcome}  />
             <Stack.Screen name="SignIn" component={SignIn}  />
             <Stack.Screen name="SignUP" component={SignUP}  />
+            <Stack.Screen name="SignUpTwo" component={SignUpTwo}  />
             <Stack.Screen name="ForgetPassword" component={ForgetPassword}  />
             <Stack.Screen name="ChangePassword" component={ChangePassword}  />
             <Stack.Screen name="Protected" component={Protected}  />

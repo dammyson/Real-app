@@ -18,7 +18,7 @@ import colors from '../../components/theme/colors'
 import { Container, Content } from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
 import { useTheme } from 'react-native-paper';
-
+import { baseUrl, processResponse } from '../../components/utilities';
 
 import Users from './user';
 
@@ -29,22 +29,13 @@ export default class SignInScreen extends Component {
         super(props);
         this.state = {
             loading: false,
-            done: false,
-            failed: false,
-            pin: false,
-            items: [],
-            qty: 0,
-            amount: 0,
-            balance: 0,
-            code: [],
             operation_message: '',
-            name: '',
-            show_share: false,
-            details: '',
-            is_donor: false,
+            email: '',
+            password: '',
+            confirm_password: '',
             is_valide_mail: false,
             secureTextEntry: true,
-            agree:false
+            agree: false
         };
     }
 
@@ -53,18 +44,39 @@ export default class SignInScreen extends Component {
         console.log(text);
         let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (reg.test(text) === false) {
-            console.warn("Email is Not Correct");
             this.setState({ email: text, is_valide_mail: false })
             return false;
         }
         else {
             this.setState({ email: text, is_valide_mail: true })
-            console.warn("Email is Correct");
+            
         }
     }
 
     updateSecureTextEntry = () => {
-      this.setState({secureTextEntry: this.state.secureTextEntry ? false : true})
+        this.setState({ secureTextEntry: this.state.secureTextEntry ? false : true })
+    }
+
+    processStepOne() {
+        const { email, password, confirm_password, is_valide_mail, agree } = this.state
+        if (email == "" || password == "" || password.length < 8) {
+            Alert.alert('Validation failed', 'Phone field cannot be empty', [{ text: 'Okay' }])
+            return
+        }
+        if (!is_valide_mail) {
+            Alert.alert('Validation failed', 'Email is invalid', [{ text: 'Okay' }])
+            return
+        }
+        if (confirm_password != password) {
+            Alert.alert('Validation failed', 'Phone field cannot be empty', [{ text: 'Okay' }])
+            return
+        }
+        if (!agree) {
+            Alert.alert('Validation failed', 'You must accept or termps and conditions', [{ text: 'Okay' }])
+            return
+        }
+        var payload ={ email: email, password: password, confirm_password: confirm_password }
+        this.props.navigation.navigate('SignUpTwo', payload)
     }
 
 
@@ -88,8 +100,8 @@ export default class SignInScreen extends Component {
                                 </View>
 
                                 <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 5, }}>
-                               
-                                        <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 16, marginBottom: 2, marginTop: 2}}>  Sign UP</Text>
+
+                                    <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 16, marginBottom: 2, marginTop: 2 }}>  Sign UP</Text>
                                 </View>
 
                                 <View style={styles.textInputContainer}>
@@ -111,8 +123,10 @@ export default class SignInScreen extends Component {
                                             keyboardType='email-address'
                                             autoCapitalize="none"
                                             autoCorrect={false}
+                                            defaultValue={this.state.email}
                                             style={{ flex: 1, fontSize: 12, color: '#d1d1d1', fontFamily: 'Poppins-SemiBold', }}
                                             onChangeText={(text) => this.validate(text)}
+                                            onSubmitEditing={() => this.passwordInput.focus()}
                                         />
                                     </View>
 
@@ -156,8 +170,11 @@ export default class SignInScreen extends Component {
                                             secureTextEntry={this.state.secureTextEntry}
                                             autoCapitalize="none"
                                             autoCorrect={false}
+                                            defaultValue={this.state.password}
                                             style={{ flex: 1, fontSize: 12, color: '#d1d1d1', fontFamily: 'Poppins-SemiBold', }}
+                                            ref={(input) => this.passwordInput = input}
                                             onChangeText={text => this.setState({ password: text })}
+                                            onSubmitEditing={() => this.cpasswordInput.focus()}
                                         />
                                     </View>
 
@@ -202,8 +219,11 @@ export default class SignInScreen extends Component {
                                             secureTextEntry={this.state.secureTextEntry}
                                             autoCapitalize="none"
                                             autoCorrect={false}
+                                            defaultValue={this.state.confirm_password}
                                             style={{ flex: 1, fontSize: 12, color: '#d1d1d1', fontFamily: 'Poppins-SemiBold', }}
+                                            ref={(input) => this.cpasswordInput = input}
                                             onChangeText={text => this.setState({ confirm_password: text })}
+                                            onSubmitEditing={() => this.processStepOne()}
                                         />
                                     </View>
 
@@ -229,7 +249,7 @@ export default class SignInScreen extends Component {
                                 </View>
                                 <View style={[styles.terms_container]}>
                                     {!this.state.agree ?
-                                        <TouchableOpacity onPress={() => this.setState({ agree: true , show_terms_error: false })} style={[{height:15, width:15,  justifyContent: 'center', alignItems: 'center',}]}>
+                                        <TouchableOpacity onPress={() => this.setState({ agree: true, show_terms_error: false })} style={[{ height: 15, width: 15, justifyContent: 'center', alignItems: 'center', }]}>
                                             <Icon
                                                 name="checkbox-passive"
                                                 type='fontisto'
@@ -238,7 +258,7 @@ export default class SignInScreen extends Component {
                                             />
                                         </TouchableOpacity>
                                         :
-                                        <TouchableOpacity onPress={() => this.setState({ agree: false })} style={[{height:15, width:15,  justifyContent: 'center', alignItems: 'center', }]}>
+                                        <TouchableOpacity onPress={() => this.setState({ agree: false })} style={[{ height: 15, width: 15, justifyContent: 'center', alignItems: 'center', }]}>
                                             <Icon
                                                 name="checkbox-active"
                                                 type='fontisto'
@@ -253,8 +273,8 @@ export default class SignInScreen extends Component {
                                     </TouchableOpacity>
                                 </View>
                                 <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={['#ffcfa2', '#88725e']} style={styles.buttonContainer} block iconLeft>
-                                    <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() => this.setState({ pin: true })} >
-                                        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#415c5a', fontSize: 14 }}>Create account</Text>
+                                    <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() => this.processStepOne()}>
+                                        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#415c5a', fontSize: 14 }}>Next</Text>
                                     </TouchableOpacity>
                                 </LinearGradient>
 
@@ -262,7 +282,7 @@ export default class SignInScreen extends Component {
                                     <View style={{ alignItems: 'center' }}>
                                         <Text style={{ color: '#d1d1d1', fontFamily: 'Poppins-Medium', fontSize: 12, marginBottom: 7, marginTop: 7 }}>Already a member?</Text>
                                     </View>
-                                    <TouchableOpacity onPress={() =>this.props.navigation.navigate('SignIn')} style={{ alignItems: 'center' }}>
+                                    <TouchableOpacity onPress={() => this.props.navigation.navigate('SignIn')} style={{ alignItems: 'center' }}>
                                         <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 13, marginBottom: 7, marginTop: 7 }}>  Sign In!</Text>
                                     </TouchableOpacity>
                                 </View>
