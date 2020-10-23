@@ -18,7 +18,7 @@ import colors from '../../components/theme/colors'
 import { Container, Content } from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
 import { useTheme } from 'react-native-paper';
-import { baseUrl, processResponse } from '../../components/utilities';
+import { baseUrl, processResponse } from '../../utilities';
 
 import Users from './user';
 

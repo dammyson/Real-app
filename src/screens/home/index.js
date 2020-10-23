@@ -81,7 +81,6 @@ export default class HomeScreen extends React.Component {
       this.scrollPosition(25),
       this.scrollPosition(45),
     ];
-
     const imageOpacity = this.scrollY.y.interpolate({
       inputRange: [0, startImgFade, finishImgFade],
       outputRange: [1, 1, 0],

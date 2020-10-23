@@ -9,7 +9,7 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, KeyboardAvoidingView, View} from 'react-native';
 
-import AppNavigator from '../../components/navigations/TabsNavigation';
+import AppNavigator from '../../navigations/TabsNavigation';
 
 
 

@@ -5,16 +5,34 @@ export const baseUrl = () => {
 };
 
 
+export const setToken = (token) => {
+  AsyncStorage.setItem('access_token', token);
+};
 export const getToken = async () => {
   return AsyncStorage.getItem('access_token')
+};
+export const setRefresheToken = (token) => {
+  AsyncStorage.setItem('refresh_token', token);
 };
 export const getRefresheToken = async () => {
   return AsyncStorage.getItem('refresh_token')
 };
 
+
+export const setIsFirst =  () => {
+  return AsyncStorage.getItem('isFirst')
+};
 export const getIsFirst = async () => {
   return AsyncStorage.getItem('isFirst')
 };
+
+export const setUserId =  (id) => {
+  AsyncStorage.setItem('user_id', id);
+};
+export const getUserId = async () => {
+  return AsyncStorage.getItem('user_id')
+};
+
 
 export const getPhone = async () => {
   return AsyncStorage.getItem('phone')

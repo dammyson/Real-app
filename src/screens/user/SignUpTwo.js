@@ -16,16 +16,17 @@ import { Icon } from 'react-native-elements';
 import LottieView from 'lottie-react-native';
 import colors from '../../components/theme/colors'
 import { Container, Content } from 'native-base';
-import Feather from 'react-native-vector-icons/Feather';
-import { useTheme } from 'react-native-paper';
+import { navigation } from '../../../rootNavigation'
+import { connect } from 'react-redux'
+import { RegisterRequest } from '../../actions/userActions'
 
 
 import Users from './user';
 import ActivityIndicator from '../../components/views/ActivityIndicator';
-import { baseUrl, processResponse } from '../../components/utilities';
+import { baseUrl, processResponse } from '../../utilities';
 
 
-export default class SignUpTwo extends Component {
+class SignUpTwo extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -49,17 +50,11 @@ export default class SignUpTwo extends Component {
 
     async SignUpRequest() {
 
-
         const { email, password, confirm_password, phone, lname,fname } = this.state
-    
         if (phone == "" || lname == ""  || fname == '') {
           Alert.alert('Validation failed', 'Phone field cannot be empty', [{ text: 'Okay' }])
           return
         } 
-       
-        this.setState({ loading: true })
-       
-
         var formData = JSON.stringify({
             email: email,
             userName: fname,
@@ -70,40 +65,8 @@ export default class SignUpTwo extends Component {
             password_confirmation: confirm_password,
             clientBaseUrl: 'https://lottiefiles.com/search?q=loading+house&category=animations&animations-page=3',
         });
-    
-        this.setState({ loading: true })
-        fetch(baseUrl() + 'users', {
-          method: 'POST', headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          }, body: formData,
-        })
-          .then(processResponse)
-          .then(res => {
-           
-            this.setState({ loading: false })
-            const { statusCode, data } = res;
-            console.warn(data)
-            if (statusCode === 200) {
-                AsyncStorage.setItem('user_id', data.id);
-                this.props.navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'SignIn' }],
-                });
-            
-            } else if (statusCode === 422) {
-              Alert.alert('Validation failed', data.message, [{ text: 'Okay' }])
-            } else {
-              Alert.alert('Operarion failed', data.message, [{ text: 'Okay' }])
-            }
-          })
-          .catch((error) => {
-            console.warn(error);
-            alert(error.message);
-            this.setState({ loading: false })
-          });
-    
-    
+        const { RegisterPostRequest } = this.props
+        RegisterPostRequest(formData)
       }
 
 
@@ -243,6 +206,20 @@ export default class SignUpTwo extends Component {
 
 }
 
+const mapStateToProps = state => {
+    console.warn( state.user.user)
+    state.user.user.hasOwnProperty('id') ?
+    navigation.navigate('SignIn') : null  
+    return {
+        user: state.user
+    }
+}
+const mapDispatchToProps = (dispatch, props) => {
+    return {
+        RegisterPostRequest: (details) => dispatch(RegisterRequest(details))
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(SignUpTwo);
 
 
 const styles = StyleSheet.create({

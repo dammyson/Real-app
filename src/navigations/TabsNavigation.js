@@ -2,13 +2,13 @@ import React from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 
 
-import Home from '../../screens/home';
-import Search from '../../screens/search';
-import Profile from '../../screens/profile';
-import Setting from '../../screens/settings';
+import Home from '../screens/home';
+import Search from '../screens/search';
+import Profile from '../screens/profile';
+import Setting from '../screens/settings';
 
 import { Icon} from 'react-native-elements'
-import colors from './../theme/colors';
+import colors from '../components/theme/colors';
 
 
 
