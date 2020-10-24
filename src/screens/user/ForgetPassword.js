@@ -16,56 +16,52 @@ import { Icon } from 'react-native-elements';
 import LottieView from 'lottie-react-native';
 import colors from '../../components/theme/colors'
 import { Container, Content } from 'native-base';
-import Feather from 'react-native-vector-icons/Feather';
-import { useTheme } from 'react-native-paper';
+import { navigation } from '../../../rootNavigation'
+import { connect } from 'react-redux'
+import { ForgetPasswordRequest } from '../../actions/userActions'
+import { getToken, } from '../../utilities';
 
-
-import Users from './user';
-
-
-
-export default class ForgetPassword extends Component {
+class ForgetPassword extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading: false,
-            done: false,
-            failed: false,
-            pin: false,
-            items: [],
-            qty: 0,
-            amount: 0,
-            balance: 0,
-            code: [],
-            operation_message: '',
-            name: '',
+            email: 'pechbusorg@gmail.com',
             show_share: false,
             details: '',
             is_donor: false,
-            is_valide_mail: false,
-            secureTextEntry: true
+            is_valide_mail: true,
+
         };
     }
 
 
     validate = (text) => {
-        console.log(text);
         let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (reg.test(text) === false) {
-            console.warn("Email is Not Correct");
             this.setState({ email: text, is_valide_mail: false })
             return false;
         }
         else {
             this.setState({ email: text, is_valide_mail: true })
-            console.warn("Email is Correct");
         }
     }
 
-    updateSecureTextEntry = () => {
-      this.setState({secureTextEntry: this.state.secureTextEntry ? false : true})
-    }
+ 
 
+    async changePasswordRequest() {
+      
+        const { email, is_valide_mail } = this.state
+        if (email == "" ) {
+            Alert.alert('Validation failed', 'Email field cannot be empty', [{ text: 'Okay' }])
+            return
+        }
+        if (!is_valide_mail) {
+            Alert.alert('Validation failed', 'Email is invalid', [{ text: 'Okay' }])
+            return
+        }
+        const { ForgetPostRequest } = this.props
+        ForgetPostRequest(email, await getToken());
+    }
 
     render() {
 
@@ -105,9 +101,8 @@ export default class ForgetPassword extends Component {
                                         <TextInput
                                             placeholder="Email "
                                             placeholderTextColor='#fff'
-
                                             returnKeyType="next"
-                                            keyboardType="numeric"
+                                            keyboardType="default"
                                             autoCapitalize="none"
                                             autoCorrect={false}
                                             style={{ flex: 1, fontSize: 12, color: '#d1d1d1', fontFamily: 'Poppins-SemiBold', }}
@@ -142,7 +137,7 @@ export default class ForgetPassword extends Component {
                                     </TouchableOpacity>
                                 </View>
                                 <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={['#ffcfa2', '#88725e']} style={styles.buttonContainer} block iconLeft>
-                                    <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() =>this.props.navigation.navigate('ChangePassword')} >
+                                    <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() =>this.changePasswordRequest()} >
                                         <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#415c5a', fontSize: 14 }}>Continue</Text>
                                     </TouchableOpacity>
                                 </LinearGradient>
@@ -170,6 +165,19 @@ export default class ForgetPassword extends Component {
 
 }
 
+const mapStateToProps = state => {
+    state.user.user.message =='Successful' ?
+    navigation.navigate('ChangePassword') : null  
+    return {
+        user: state.user
+    }
+}
+const mapDispatchToProps = (dispatch, props) => {
+    return {
+        ForgetPostRequest: (email, token) => dispatch(ForgetPasswordRequest(email, token))
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(ForgetPassword);
 
 
 const styles = StyleSheet.create({

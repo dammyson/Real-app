@@ -111,3 +111,115 @@ export const RegisterSuccess = (user) => {
     }
 }
 
+
+export const ForgetPasswordRequest = (email, token) => {
+    return (dispatch) => {
+        dispatch(SHOW_LOADER('Processing...'))
+        console.warn(baseUrl() + 'auth/SendForgotPasswordToken')
+        fetch(baseUrl() + 'auth/SendForgotPasswordToken', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                 Accept: 'application/json',
+                 'Authorization': 'Bearer '+token,
+            }, body: JSON.stringify({
+                clientBaseUrl: baseUrl(),
+                email: email,
+            }),
+        })
+            .then(processResponse)
+            .then(res => {
+                const { statusCode, data } = res;
+                console.warn(data)
+                if (statusCode === 200) {
+                     dispatch(ForgetPasswordSuccess(data))
+                    dispatch(HIDE_LOADER())
+                } else if (statusCode === 422) {
+                    dispatch(HIDE_LOADER())
+                     dispatch(ForgetPasswordFailure(data.message))
+                } else {
+                    dispatch(HIDE_LOADER())
+                     dispatch(ForgetPasswordFailure(data.message))
+                }
+            })
+            .catch((error) => {
+                dispatch(HIDE_LOADER())
+                console.warn(error)
+                dispatch(ForgetPasswordFailure(error))
+            });
+
+    }
+}
+
+const FetchFGDefaultState = () => {
+    return {
+        type: userActions.FORGET_PASSWORD_REQUEST,
+    }
+}
+export const ForgetPasswordFailure = (error) => {
+    return {
+        type: userActions.FORGET_PASSWORD_FAILURE,
+        error
+    }
+}
+export const ForgetPasswordSuccess = (user) => {
+    return {
+        type: userActions.FORGET_PASSWORD_SUCCESS,
+        payload: user
+    }
+}
+
+
+export const ChangePasswordRequest = (details, token) => {
+    return (dispatch) => {
+        dispatch(SHOW_LOADER('Processing...'))
+        console.warn(baseUrl() + 'auth/ResetPassword')
+        fetch(baseUrl() + 'auth/ResetPassword', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                 Accept: 'application/json',
+                 'Authorization': 'Bearer '+token,
+            }, body: details,
+        })
+            .then(processResponse)
+            .then(res => {
+                const { statusCode, data } = res;
+                console.warn(data)
+                if (statusCode === 200) {
+                     dispatch(ForgetPasswordSuccess(data))
+                    dispatch(HIDE_LOADER())
+                } else if (statusCode === 422) {
+                    dispatch(HIDE_LOADER())
+                     dispatch(ForgetPasswordFailure(data.message))
+                } else {
+                    dispatch(HIDE_LOADER())
+                     dispatch(ForgetPasswordFailure(data.message))
+                }
+            })
+            .catch((error) => {
+                dispatch(HIDE_LOADER())
+                console.warn(error)
+               // dispatch(ForgetPasswordFailure(error))
+            });
+
+    }
+}
+
+const FetchCPDefaultState = () => {
+    return {
+        type: userActions.CHANGE_PASSWORD_REQUEST,
+    }
+}
+export const ChangePasswordFailure = (error) => {
+    return {
+        type: userActions.CHANGE_PASSWORD_FAILURE,
+        error
+    }
+}
+export const ChangePasswordSuccess = (user) => {
+    return {
+        type: userActions.CHANGE_PASSWORD_SUCCESS,
+        payload: user
+    }
+}

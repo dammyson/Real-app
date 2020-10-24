@@ -17,34 +17,19 @@ import LottieView from 'lottie-react-native';
 import colors from '../../components/theme/colors'
 import { Container, Content } from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
-import { useTheme } from 'react-native-paper';
+import { navigation } from '../../../rootNavigation'
+import { connect } from 'react-redux'
+import { ChangePasswordRequest } from '../../actions/userActions'
+import { getToken, } from '../../utilities';
 
-
-import Users from './user';
-
-
-
-export default class ChangePassword extends Component {
+class ChangePassword extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading: false,
-            done: false,
-            failed: false,
-            pin: false,
-            items: [],
-            qty: 0,
-            amount: 0,
-            balance: 0,
-            code: [],
-            operation_message: '',
-            name: '',
-            show_share: false,
-            details: '',
-            is_donor: false,
-            is_valide_mail: false,
-            secureTextEntry: true,
-            agree:false
+          
+            code: '480437',
+            password: '12345678',
+            confirm_password: '12345678',
         };
     }
 
@@ -63,10 +48,26 @@ export default class ChangePassword extends Component {
         }
     }
 
-    updateSecureTextEntry = () => {
-      this.setState({secureTextEntry: this.state.secureTextEntry ? false : true})
-    }
+    async ChangePasswordRequest() {
 
+        const { code, password, confirm_password,  } = this.state
+        if (code == "" || password == "" || password.length < 8) {
+            Alert.alert('Validation failed', 'Phone field cannot be empty', [{ text: 'Okay' }])
+            return
+        }
+        if (confirm_password != password) {
+            Alert.alert('Validation failed', 'Phone field cannot be empty', [{ text: 'Okay' }])
+            return
+        }
+
+        var formData = JSON.stringify({
+            code: code,
+            password: password,
+            password_confirmation: confirm_password,
+        });
+        const { ChangePasswordPostRequest } = this.props
+        ChangePasswordPostRequest(formData,await getToken())
+      }
 
     render() {
 
@@ -113,7 +114,7 @@ export default class ChangePassword extends Component {
                                             autoCapitalize="none"
                                             autoCorrect={false}
                                             style={{ flex: 1, fontSize: 12, color: '#d1d1d1', fontFamily: 'Poppins-SemiBold', }}
-                                            onChangeText={(text) => this.validate(text)}
+                                            onChangeText={text => this.setState({ code: text })}
                                         />
                                     </View>
 
@@ -230,7 +231,7 @@ export default class ChangePassword extends Component {
                                 </View>
                               
                                 <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={['#ffcfa2', '#88725e']} style={styles.buttonContainer} block iconLeft>
-                                    <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() => this.setState({ pin: true })} >
+                                    <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() => this.ChangePasswordRequest()} >
                                         <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#415c5a', fontSize: 14 }}>Continue</Text>
                                     </TouchableOpacity>
                                 </LinearGradient>
@@ -258,7 +259,19 @@ export default class ChangePassword extends Component {
 
 }
 
-
+const mapStateToProps = state => {
+    state.user.user.message =='SignIn' ?
+    navigation.navigate('ChangePassword') : null 
+    return {
+        user: state.user
+    }
+}
+const mapDispatchToProps = (dispatch, props) => {
+    return {
+        ChangePasswordPostRequest: (email, token) => dispatch(ChangePasswordRequest(email, token))
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(ChangePassword);
 
 const styles = StyleSheet.create({
     container: {

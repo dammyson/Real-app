@@ -36,6 +36,34 @@ const reducer = (state = defaultState, action) => {
             Alert.alert('Error', reg_message)
             return state
             break
+        case userActions.FORGET_PASSWORD_REQUEST:
+            state = { ...state, user: {} }
+            return state
+            break
+        case userActions.FORGET_PASSWORD_SUCCESS:
+            console.warn(action.payload)
+            state = { ...state, user: action.payload }
+            return state
+            break
+        case userActions.FORGET_PASSWORD_FAILURE:
+            const forget_message = action.error
+            Alert.alert('Error', forget_message)
+            return state
+            break
+        case userActions.CHANGE_PASSWORD_REQUEST:
+            state = { ...state, user: {} }
+            return state
+            break
+        case userActions.CHANGE_PASSWORD_SUCCESS:
+            console.warn(action.payload)
+            state = { ...state, user: action.payload }
+            return state
+            break
+        case userActions.CHANGE_PASSWORD_FAILURE:
+            const change_message = action.error
+            Alert.alert('Error', change_message)
+            return state
+            break
         default:
             return state
     }

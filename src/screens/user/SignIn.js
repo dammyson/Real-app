@@ -27,16 +27,15 @@ class SignInScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            email: 'pechbusorg@gmail.com',
-            password: '12345678',
-            is_valide_mail: true,
+            email: '',
+            password: '',
+            is_valide_mail: false,
             secureTextEntry: true
         };
     }
 
 
     validate = (text) => {
-        console.log(text);
         let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (reg.test(text) === false) {
             this.setState({ email: text, is_valide_mail: false })
