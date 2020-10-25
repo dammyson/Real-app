@@ -36,7 +36,7 @@ export const LoginRequest = (email, password) => {
             })
             .catch((error) => {
                 dispatch(HIDE_LOADER())
-                dispatch(LoginFailure(error))
+                dispatch(ForgetPasswordFailure('No Internet Connection. Please Check your network'))
             });
 
     }
@@ -86,7 +86,7 @@ export const RegisterRequest = (details) => {
             })
             .catch((error) => {
                 dispatch(HIDE_LOADER())
-                dispatch(RegisterFailure(error))
+                dispatch(ForgetPasswordFailure('No Internet Connection. Please Check your network'))
             });
 
 
@@ -120,8 +120,8 @@ export const ForgetPasswordRequest = (email, token) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                 Accept: 'application/json',
-                 'Authorization': 'Bearer '+token,
+                Accept: 'application/json',
+                'Authorization': 'Bearer ' + token,
             }, body: JSON.stringify({
                 clientBaseUrl: baseUrl(),
                 email: email,
@@ -132,20 +132,20 @@ export const ForgetPasswordRequest = (email, token) => {
                 const { statusCode, data } = res;
                 console.warn(data)
                 if (statusCode === 200) {
-                     dispatch(ForgetPasswordSuccess(data))
+                    dispatch(ForgetPasswordSuccess(data))
                     dispatch(HIDE_LOADER())
                 } else if (statusCode === 422) {
                     dispatch(HIDE_LOADER())
-                     dispatch(ForgetPasswordFailure(data.message))
+                    dispatch(ForgetPasswordFailure(data.message))
                 } else {
                     dispatch(HIDE_LOADER())
-                     dispatch(ForgetPasswordFailure(data.message))
+                    dispatch(ForgetPasswordFailure(data.message))
                 }
             })
             .catch((error) => {
                 dispatch(HIDE_LOADER())
                 console.warn(error)
-                dispatch(ForgetPasswordFailure(error))
+                dispatch(ForgetPasswordFailure('No Internet Connection. Please Check your network'))
             });
 
     }
@@ -178,8 +178,8 @@ export const ChangePasswordRequest = (details, token) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                 Accept: 'application/json',
-                 'Authorization': 'Bearer '+token,
+                Accept: 'application/json',
+                'Authorization': 'Bearer ' + token,
             }, body: details,
         })
             .then(processResponse)
@@ -187,20 +187,20 @@ export const ChangePasswordRequest = (details, token) => {
                 const { statusCode, data } = res;
                 console.warn(data)
                 if (statusCode === 200) {
-                     dispatch(ForgetPasswordSuccess(data))
+                    dispatch(ForgetPasswordSuccess(data))
                     dispatch(HIDE_LOADER())
                 } else if (statusCode === 422) {
                     dispatch(HIDE_LOADER())
-                     dispatch(ForgetPasswordFailure(data.message))
+                    dispatch(ForgetPasswordFailure(data.message))
                 } else {
                     dispatch(HIDE_LOADER())
-                     dispatch(ForgetPasswordFailure(data.message))
+                    dispatch(ForgetPasswordFailure(data.message))
                 }
             })
             .catch((error) => {
                 dispatch(HIDE_LOADER())
                 console.warn(error)
-               // dispatch(ForgetPasswordFailure(error))
+                dispatch(ForgetPasswordFailure('No Internet Connection. Please Check your network'))
             });
 
     }

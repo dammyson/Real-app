@@ -1,10 +1,5 @@
 import { Dimensions } from 'react-native'
-import colors from './colors';
-import constants from './constants';
-import sizes from './sizes';
-import screenStyles from './screenStyles';
 
-export { constants, colors, sizes, screenStyles };
 export const SCREEN_HEIGHT = Math.round(Dimensions.get('window').height);
 export const SCREEN_WIDTH = Math.round(Dimensions.get('window').width);
 export const BASE_URL = 'http://192.168.1.3:3000'

@@ -75,7 +75,7 @@ class SignUpTwo extends Component {
 
         return (
             <View style={styles.container}>
-                <StatusBar backgroundColor='#415c5a' barStyle="light-content" />
+                <StatusBar backgroundColor='#fff' barStyle="dark-content" />
                 <Container style={{ backgroundColor: 'transparent' }}>
                     <Content>
                         <View style={styles.backgroundImage}>
@@ -108,12 +108,12 @@ class SignUpTwo extends Component {
                                     <View style={styles.input}>
                                         <TextInput
                                             placeholder="Phone "
-                                            placeholderTextColor='#fff'
+                                            placeholderTextColor={colors.placeholder_color}
                                             returnKeyType="next"
-                                            keyboardType='numeric'
+                                            keyboardType='default'
                                             autoCapitalize="none"
                                             autoCorrect={false}
-                                            style={{ flex: 1, fontSize: 12, color: '#d1d1d1', fontFamily: 'Poppins-SemiBold', }}
+                                            style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-SemiBold', }}
                                             onChangeText={(text) => this.setState({phone: text})}
                                             onSubmitEditing={() => this.fnameInput.focus()}
                                         />
@@ -135,12 +135,12 @@ class SignUpTwo extends Component {
                                     <View style={styles.input}>
                                         <TextInput
                                             placeholder="First Name "
-                                            placeholderTextColor='#fff'
+                                            placeholderTextColor={colors.placeholder_color}
                                             returnKeyType="next"
                                             keyboardType='email-address'
                                             autoCapitalize="none"
                                             autoCorrect={false}
-                                            style={{ flex: 1, fontSize: 12, color: '#d1d1d1', fontFamily: 'Poppins-SemiBold', }}
+                                            style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-SemiBold', }}
                                             ref={(input)=> this.fnameInput = input}
                                             onChangeText={(text) => this.setState({fname: text})}
                                             onSubmitEditing={() => this.lnameInput.focus()}
@@ -164,12 +164,12 @@ class SignUpTwo extends Component {
                                     <View style={styles.input}>
                                         <TextInput
                                             placeholder="Last Name "
-                                            placeholderTextColor='#fff'
+                                            placeholderTextColor={colors.placeholder_color}
                                             returnKeyType="next"
                                             keyboardType='email-address'
                                             autoCapitalize="none"
                                             autoCorrect={false}
-                                            style={{ flex: 1, fontSize: 12, color: '#d1d1d1', fontFamily: 'Poppins-SemiBold', }}
+                                            style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-SemiBold', }}
                                             ref={(input)=> this.lnameInput = input}
                                             onChangeText={(text) => this.setState({lname: text})}
                                             onSubmitEditing={() => this.SignUpRequest()}
@@ -179,9 +179,9 @@ class SignUpTwo extends Component {
                                 </View>
 
                              
-                                <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={['#ffcfa2', '#88725e']} style={styles.buttonContainer} block iconLeft>
+                                <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={[colors.primary_color, colors.primary_color]} style={styles.buttonContainer} block iconLeft>
                                     <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() => this.SignUpRequest()} >
-                                        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#415c5a', fontSize: 14 }}>Create account</Text>
+                                        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#fff', fontSize: 14 }}>Create account</Text>
                                     </TouchableOpacity>
                                 </LinearGradient>
 
@@ -225,7 +225,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(SignUpTwo);
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#415c5a'
+        backgroundColor: '#fff'
     },
     backgroundImage: {
         width: Dimensions.get('window').width,
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
         paddingLeft: 12,
         borderBottomWidth: 0.6,
-        borderBottomColor: '#d1d1d1',
+        borderBottomColor: colors.primary_color,
     },
     input: {
         flex: 1,
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     text_icon: {
         padding: 10,
         borderRightWidth: 0.6,
-        borderRightColor: '#d1d1d1',
+        borderRightColor: colors.primary_color,
         alignItems: 'center',
         justifyContent: 'center',
     },

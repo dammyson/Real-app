@@ -7,8 +7,8 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, KeyboardAvoidingView, View} from 'react-native';
-
+import {Platform, StyleSheet, StatusBar, KeyboardAvoidingView, View} from 'react-native';
+import colors from '../../components/theme/colors'
 import AppNavigator from '../../navigations/TabsNavigation';
 
 
@@ -17,7 +17,11 @@ export default class Protected extends Component{
  
   render() {
     return (
+      <>
+        <StatusBar backgroundColor={colors.primary_color} barStyle="dark-content" />
        <AppNavigator/>
+      </>
+      
     );
   }
 }

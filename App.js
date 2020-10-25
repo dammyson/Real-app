@@ -24,8 +24,8 @@ function App() {
 	}
 	return (
 		<Provider store={store}>
-		  <Main />
-      <Loader />
+			<Main />
+			<Loader />
 		</Provider>
 	)
 }

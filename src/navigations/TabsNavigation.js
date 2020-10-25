@@ -18,16 +18,16 @@ const Tab = createMaterialBottomTabNavigator();
 const MainTabScreen = () => (
     <Tab.Navigator
       initialRouteName="Home"
-      activeColor={colors.primary_color}
+      activeColor={colors.white}
       inactiveColor='grey'
-      barStyle={{ backgroundColor: '#fff' }}
+      barStyle={{ backgroundColor: colors.primary_color }}
     >
       <Tab.Screen
         name="Home"
         component={Home}
         options={{
           tabBarLabel: 'Home',
-          tabBarColor: '#fff',
+          tabBarColor: colors.primary_color,
           tabBarIcon: ({ color }) => (
             <Icon
             name="home"
@@ -42,7 +42,7 @@ const MainTabScreen = () => (
         component={Search}
         options={{
           tabBarLabel: 'Search',
-          tabBarColor: '#fff',
+          tabBarColor: colors.primary_color,
           tabBarIcon: ({ color }) => (
             <Icon
             name="search1"
@@ -57,7 +57,7 @@ const MainTabScreen = () => (
         component={Profile}
         options={{
           tabBarLabel: 'Profile',
-          tabBarColor: '#fff',
+          tabBarColor:colors.primary_color,
           tabBarIcon: ({ color }) => (
             <Icon
               active
@@ -73,7 +73,7 @@ const MainTabScreen = () => (
         component={Setting}
         options={{
           tabBarLabel: 'Settings',
-          tabBarColor: '#fff',
+          tabBarColor: colors.primary_color,
           tabBarIcon: ({ color }) => (
             <Icon
               active

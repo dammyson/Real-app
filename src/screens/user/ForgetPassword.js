@@ -25,11 +25,11 @@ class ForgetPassword extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            email: 'pechbusorg@gmail.com',
+            email: '',
             show_share: false,
             details: '',
             is_donor: false,
-            is_valide_mail: true,
+            is_valide_mail: false,
 
         };
     }
@@ -68,7 +68,7 @@ class ForgetPassword extends Component {
 
         return (
             <View style={styles.container}>
-                <StatusBar backgroundColor='#415c5a' barStyle="light-content" />
+                <StatusBar backgroundColor='#fff' barStyle="dark-content" />
                 <Container style={{ backgroundColor: 'transparent' }}>
                     <Content>
                         <View style={styles.backgroundImage}>
@@ -100,7 +100,7 @@ class ForgetPassword extends Component {
                                     <View style={styles.input}>
                                         <TextInput
                                             placeholder="Email "
-                                            placeholderTextColor='#fff'
+                                            placeholderTextColor={colors.placeholder_color}
                                             returnKeyType="next"
                                             keyboardType="default"
                                             autoCapitalize="none"
@@ -133,18 +133,18 @@ class ForgetPassword extends Component {
                                
                                 <View style={{ marginLeft: 20, marginRight: 20, flexDirection: 'row', marginBottom: 1, }}>
                                     <TouchableOpacity onPress={() => goBack()} style={{ flex: 1, alignItems: 'center' }}>
-                                        <Text style={{ color: '#d1d1d1', fontFamily: 'Poppins-Medium', fontSize: 12, marginBottom: 7, marginTop: 7 }}>We'll send a recovery link to Email</Text>
+                                        <Text style={{ color: colors.secondary_color, fontFamily: 'Poppins-Medium', fontSize: 12, marginBottom: 7, marginTop: 7 }}>We'll send a recovery link to Email</Text>
                                     </TouchableOpacity>
                                 </View>
-                                <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={['#ffcfa2', '#88725e']} style={styles.buttonContainer} block iconLeft>
+                                <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={[ colors.primary_color,  colors.primary_color]} style={styles.buttonContainer} block iconLeft>
                                     <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() =>this.changePasswordRequest()} >
-                                        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#415c5a', fontSize: 14 }}>Continue</Text>
+                                        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#fff', fontSize: 14 }}>Continue</Text>
                                     </TouchableOpacity>
                                 </LinearGradient>
 
                                 <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 10, }}>
                                     <View style={{ alignItems: 'center' }}>
-                                        <Text style={{ color: '#d1d1d1', fontFamily: 'Poppins-Medium', fontSize: 12, marginBottom: 7, marginTop: 7 }}>No Need?</Text>
+                                        <Text style={{ color: colors.secondary_color, fontFamily: 'Poppins-Medium', fontSize: 12, marginBottom: 7, marginTop: 7 }}>No Need?</Text>
                                     </View>
                                     <TouchableOpacity onPress={() =>this.props.navigation.navigate('SignUP')} style={{ alignItems: 'center' }}>
                                         <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 13, marginBottom: 7, marginTop: 7 }}>  Sign In!</Text>
@@ -183,7 +183,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(ForgetPassword);
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#415c5a'
+        backgroundColor: '#fff'
     },
     backgroundImage: {
         width: Dimensions.get('window').width,
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
         paddingLeft: 12,
         borderBottomWidth: 0.6,
-        borderBottomColor: '#d1d1d1',
+        borderBottomColor:  colors.primary_color,
     },
     input: {
         flex: 1,
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     text_icon: {
         padding: 10,
         borderRightWidth: 0.6,
-        borderRightColor: '#d1d1d1',
+        borderRightColor:  colors.primary_color,
         alignItems: 'center',
         justifyContent: 'center',
     },

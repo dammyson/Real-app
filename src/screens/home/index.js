@@ -1,219 +1,364 @@
-import React from 'react';
-import {
-  Text,
-  View,
-  Image,
-  StatusBar,
-  Modal,
-  Animated,
-  Platform,
-} from 'react-native';
-import StickyParallaxHeader from 'react-native-sticky-parallax-header';
-import { constants, colors, sizes } from '../../constants';
-import styles from './HomeScreen.styles';
+import React, { Component } from 'react'
+import { Text, StyleSheet, View, ScrollView, StatusBar, TouchableOpacity, Image, ImageBackground, Dimensions } from 'react-native'
+import { connect } from 'react-redux'
+import { FetchNotificationsRequest } from '../../actions/notificationsActions'
+import { navigation } from '../../../rootNavigation'
+import Swiper from 'react-native-swiper';
+import colors from '../../components/theme/colors'
+import { Icon } from 'react-native-elements';
+import Carousel, { Pagination, ParallaxImage } from 'react-native-snap-carousel';
 
-import { QuizListElement, UserModal } from '../../components';
+class index extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            loading: true,
+            slider1ActiveSlide: 0,
+            dataone: [4, 5, 6
+            ],
+            datatwo: [
+            ],
+        };
+    }
+    componentDidMount() {
+        const { fetchNotifications } = this.props
+        fetchNotifications()
+    }
+    onPressSearchHandler() {
+        navigation.navigate('Search')
+    }
+    render() {
+        const { slider1ActiveSlide } = this.state;
+        const notifications = [...this.props.notifications]
+        return (
+            <ScrollView style={styles.container}>
+                <StatusBar barStyle={'light-content'} />
+                <View style={styles.sliderContainer}>
+                    <Swiper
+                        autoplay
+                        horizontal={false}
+                        height={200}
+                        activeDotColor="#FF6347">
+                        <View style={styles.slide}>
+                            <Image
+                                source={require('../../assets/misis.jpg')}
+                                resizeMode="cover"
+                                style={styles.sliderImage}
+                            />
+                        </View>
+                        <View style={styles.slide}>
+                            <Image
+                                source={require('../../assets/land.jpg')}
+                                resizeMode="cover"
+                                style={styles.sliderImage}
+                            />
+                        </View>
+                        <View style={styles.slide}>
+                            <Image
+                                source={require('../../assets/house2.jpg')}
+                                resizeMode="cover"
+                                style={styles.sliderImage}
+                            />
+                        </View>
+                    </Swiper>
+                </View>
 
-import { Brandon, Jennifer, Ewa } from '../../assets/data/cards';
+                <View style={styles.categoryContainer}>
+                    <TouchableOpacity
+                        style={styles.categoryBtn}
+                        onPress={() =>
+                            navigation.navigate('CardListScreen', { title: 'Restaurant' })
+                        }>
+                        <View style={styles.categoryIcon}>
+                            <Icon
+                                name="email"
+                                size={20}
+                                type='entypo'
+                                color={colors.secondary_color}
 
-const { event, ValueXY } = Animated;
-export default class HomeScreen extends React.Component {
-  constructor(props) {
-    super(props);
+                            />
+                        </View>
+                        <Text style={styles.categoryBtnTxt}>RENT</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.categoryBtn}
+                        onPress={() =>
+                            navigation.navigate('CardListScreen', { title: 'Fastfood Center' })
+                        }>
+                        <View style={styles.categoryIcon}>
+                            <Icon
+                                name="email"
+                                size={20}
+                                type='entypo'
+                                color={colors.primary_color}
 
-    this.state = {
-      headerLayout: {
-        height: 0,
-      },
-      contentHeight: {},
-      modalVisible: false,
-    };
-    this.scrollY = new ValueXY();
-  }
+                            />
+                        </View>
+                        <Text style={styles.categoryBtnTxt}>BUY</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
+                        <View style={styles.categoryIcon}>
+                            <Icon
+                                name="email"
+                                size={20}
+                                type='entypo'
+                                color={colors.primary_color}
 
-  componentDidMount() {
-    this.scrollY.y.addListener(({ value }) => (this._value = value));
-  }
+                            />
+                        </View>
+                        <Text style={styles.categoryBtnTxt}>LEASE</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={[styles.categoryContainer, { marginTop: 10 }]}>
+                    <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
+                        <View style={styles.categoryIcon}>
+                            <Icon
+                                name="email"
+                                size={20}
+                                type='entypo'
+                                color={colors.primary_color}
 
-  componentWillUnmount() {
-    this.scrollY.y.removeListener();
-  }
+                            />
+                        </View>
+                        <Text style={styles.categoryBtnTxt}>SHORT LET</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
+                        <View style={styles.categoryIcon}>
+                            <Icon
+                                name="email"
+                                size={20}
+                                type='entypo'
+                                color={colors.primary_color}
 
-  setModalVisible = (visible) => {
-    this.setState({ modalVisible: visible });
-  };
+                            />
+                        </View>
+                        <Text style={styles.categoryBtnTxt}>LAND</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
+                        <View style={styles.categoryIcon}>
+                            <Icon
+                                name="email"
+                                size={20}
+                                type='entypo'
+                                color={colors.primary_color}
 
-  setHeaderSize = (headerLayout) => this.setState({ headerLayout });
+                            />
+                        </View>
+                        <Text style={styles.categoryBtnTxt}>Show More</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ alignItems: 'center', }}>
+                    <Text
+                        style={{
+                            textAlign: 'left',
+                            fontSize: 18,
+                            fontWeight: 'bold',
+                            color: '#333',
+                        }}>
+                        Recently Viewed
+        </Text>
+                    <View style={styles.header}>
 
-  openUserModal = (userSelected) => {
-    this.setState({ userSelected }, () => this.setModalVisible(true));
-  };
+                        <Carousel
+                            ref={(c) => { this._carousel = c; }}
+                            data={this.state.dataone}
 
-  scrollPosition = (value) => {
-    const { headerLayout } = this.state;
+                            renderItem={this._renderItem}
+                            sliderWidth={Dimensions.get('window').width}
+                            itemWidth={Dimensions.get('window').width / 1.3}
+                            onSnapToItem={(index) => this.setState({ slider1ActiveSlide: index })}
+                            hasParallaxImages={true}
 
-    return constants.scrollPosition(headerLayout.height, value);
-  };
 
-  renderHeader = () => (
-    <View style={[styles.headerWrapper, styles.homeScreenHeader]}>
-      <Image
-        resizeMode="contain"
-        source={require('../../assets/logo.png')}
-        style={styles.logo}
-      />
-    </View>
-  );
+                        />
+                        <Pagination
+                            dotsLength={this.state.dataone.length}
+                            activeDotIndex={slider1ActiveSlide}
+                            containerStyle={styles.paginationContainer}
+                            dotStyle={styles.paginationDot}
+                            inactiveDotOpacity={0.4}
+                            inactiveDotScale={0.6}
+                        />
+                    </View>
+                </View>
 
-  renderForeground = () => {
-    const message = "Mornin' Mark! \nReady for a quiz?";
-    const startSize = constants.responsiveWidth(18);
-    const endSize = constants.responsiveWidth(10);
-    const [startImgFade, finishImgFade] = [
-      this.scrollPosition(22),
-      this.scrollPosition(27),
-    ];
-    const [startImgSize, finishImgSize] = [
-      this.scrollPosition(20),
-      this.scrollPosition(30),
-    ];
-    const [startTitleFade, finishTitleFade] = [
-      this.scrollPosition(25),
-      this.scrollPosition(45),
-    ];
-    const imageOpacity = this.scrollY.y.interpolate({
-      inputRange: [0, startImgFade, finishImgFade],
-      outputRange: [1, 1, 0],
-      extrapolate: 'clamp',
-    });
-    const imageSize = this.scrollY.y.interpolate({
-      inputRange: [0, startImgSize, finishImgSize],
-      outputRange: [startSize, startSize, endSize],
-      extrapolate: 'clamp',
-    });
-    const titleOpacity = this.scrollY.y.interpolate({
-      inputRange: [0, startTitleFade, finishTitleFade],
-      outputRange: [1, 1, 0],
-      extrapolate: 'clamp',
-    });
 
-    return (
-      <View style={styles.foreground}>
-        <Animated.View style={{ opacity: imageOpacity }}>
-        <Image
-        resizeMode="contain"
-        source={require('../../assets/logo.png')}
-        style={styles.logo}
-      />
-        </Animated.View>
-      </View>
-    );
-  };
-
-  renderQuizElements = (title) => {
-    const users = [Brandon, Jennifer, Ewa];
-    const {
-      navigation: { navigate },
-    } = this.props;
-
-    return users.map(
-      (user) =>
-        (title === 'Popular Quizes' || title === user.type) && (
-          <QuizListElement
-            key={user.id}
-            elements={user.cardsAmount}
-            authorName={user.author}
-            mainText={user.label}
-            labelText={user.type}
-            imageSource={user.image}
-            onPress={() => navigate('Card', { user })}
-            pressUser={() => this.openUserModal(user)}
-          />
+            </ScrollView>
         )
-    );
-  };
-
-  calcMargin = (title) => {
-    const { contentHeight } = this.state;
-    let marginBottom = 50;
-
-    if (contentHeight[title]) {
-      const padding = 24;
-      const isBigContent = constants.deviceHeight - contentHeight[title] < 0;
-
-      if (isBigContent) {
-        return marginBottom;
-      }
-
-      marginBottom =
-        constants.deviceHeight -
-        padding * 2 -
-        sizes.headerHeight -
-        contentHeight[title];
-
-      return marginBottom > 0 ? marginBottom : 0;
     }
 
-    return marginBottom;
-  };
 
-  onLayoutContent = (e, title) => {
-    const { contentHeight } = this.state;
-    const contentHeightTmp = { ...contentHeight };
-    contentHeightTmp[title] = e.nativeEvent.layout.height;
+    _renderItem = ({ item, index }, parallaxProps) => {
 
-    this.setState({
-      contentHeight: { ...contentHeightTmp },
-    });
-  };
+        return (
+            <TouchableOpacity style={{ borderRadius: 12, marginBottom: 20 }} onPress={() => this.getDetails(item)} >
+                <ImageBackground
+                    opacity={0.5}
+                    style={{ borderRadius: 12, }}
+                    source={require('../../assets/house2.jpg')}
+                    imageStyle={{ borderRadius: 20, backgroundColor: 'blue' }}
 
-  renderContent = (title) => {
-    const marginBottom = Platform.select({
-      ios: this.calcMargin(title),
-      android: 0,
-    });
+                >
+                    <View style={styles.details} >
+                        <Text style={styles.date}>pppppppppp</Text>
+                        <Text style={styles.tittle}>kkkkkkkkkkkkkkkkkkkkkkk</Text>
+                        <View style={styles.piceContainer}>
+                            <View style={{ flex: 1, flexDirection: 'row', marginTop: 3, marginLeft: 15 }}>
+                                <View style={{ flex: 1, }}>
 
-    return (
-      <View
-        onLayout={(e) => this.onLayoutContent(e, title)}
-        style={[styles.content, { marginBottom }]}
-      >
-    
-        <Text style={styles.contentText}>{title}</Text>
-        {this.renderQuizElements(title)}
-      </View>
-    );
-  };
+                                </View>
 
-  render() {
-    return (
-      <React.Fragment>
-        <StatusBar
-          barStyle="light-content"
-          backgroundColor={colors.primaryGreen}
-          translucent
-        />
-        <StickyParallaxHeader
-          foreground={this.renderForeground()}
-          header={this.renderHeader()}
-          
-          deviceWidth={constants.deviceWidth}
-          parallaxHeight={sizes.homeScreenParallaxHeader}
-          scrollEvent={event(
-            [{ nativeEvent: { contentOffset: { y: this.scrollY.y } } }],
-            { useNativeDriver: false }
-          )}
-          headerSize={this.setHeaderSize}
-          headerHeight={sizes.headerHeight}
-          tabTextStyle={styles.tabText}
-          tabTextContainerStyle={styles.tabTextContainerStyle}
-          tabTextContainerActiveStyle={styles.tabTextContainerActiveStyle}
-          tabsContainerBackgroundColor={colors.primaryGreen}
-          tabsWrapperStyle={styles.tabsWrapper}
-        >
-          {this.renderContent('Popular Quizes')}
-        </StickyParallaxHeader>
-      </React.Fragment>
-    );
-  }
+                                <View style={{ width: 20 }}>
+
+                                </View>
+                            </View>
+                        </View>
+
+                    </View>
+
+
+                </ImageBackground>
+            </TouchableOpacity>
+        );
+    }
+
 }
+
+const mapStateToProps = state => {
+    return {
+        notifications: state.notifications
+    }
+}
+const mapDispatchToProps = (dispatch, props) => {
+    return {
+        fetchNotifications: () => dispatch(FetchNotificationsRequest())
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(index);
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    sliderContainer: {
+        height: 200,
+        width: '100%',
+        justifyContent: 'center',
+        alignSelf: 'center',
+        borderRadius: 8,
+    },
+
+    wrapper: {},
+
+    slide: {
+        flex: 1,
+        justifyContent: 'center',
+        backgroundColor: 'transparent',
+    },
+    sliderImage: {
+        height: '100%',
+        width: '100%',
+        alignSelf: 'center',
+    },
+    categoryContainer: {
+        flexDirection: 'row',
+        width: '90%',
+        alignSelf: 'center',
+        marginTop: 25,
+        marginBottom: 10,
+    },
+    categoryBtn: {
+        flex: 1,
+        width: '30%',
+        marginHorizontal: 0,
+        alignSelf: 'center',
+    },
+    categoryIcon: {
+        borderWidth: 0,
+        alignItems: 'center',
+        justifyContent: 'center',
+        alignSelf: 'center',
+        width: 70,
+        height: 70,
+        backgroundColor: '#415c5a30' /* '#FF6347' */,
+        borderRadius: 50,
+    },
+    categoryBtnTxt: {
+        alignSelf: 'center',
+        marginTop: 5,
+        color: '#415c5a',
+    },
+    cardsWrapper: {
+        marginTop: 20,
+        width: '90%',
+        alignSelf: 'center',
+    },
+    card: {
+        height: 100,
+        marginVertical: 10,
+        flexDirection: 'row',
+        shadowColor: '#999',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        elevation: 5,
+    },
+    cardImgWrapper: {
+        flex: 1,
+    },
+    cardImg: {
+        height: '100%',
+        width: '100%',
+        alignSelf: 'center',
+        borderRadius: 8,
+        borderBottomRightRadius: 0,
+        borderTopRightRadius: 0,
+    },
+    cardInfo: {
+        flex: 2,
+        padding: 10,
+        borderColor: '#ccc',
+        borderWidth: 1,
+        borderLeftWidth: 0,
+        borderBottomRightRadius: 8,
+        borderTopRightRadius: 8,
+        backgroundColor: '#fff',
+    },
+    cardTitle: {
+        fontWeight: 'bold',
+    },
+    cardDetails: {
+        fontSize: 12,
+        color: '#444',
+    },
+    details: {
+        marginTop: 100,
+        marginBottom: 25,
+    },
+    date: {
+        marginRight: 13,
+        marginLeft: 13,
+        fontSize: 12,
+        color: '#ffffff',
+        textAlign: 'left',
+        fontFamily: 'NunitoSans-Bold'
+    },
+    tittle: {
+        marginRight: 13,
+        marginLeft: 13,
+        fontSize: 16,
+        color: '#ffffff',
+        textAlign: 'left',
+        fontWeight: '600',
+        fontFamily: 'NunitoSans-Bold'
+    },
+    price: {
+
+        marginRight: 13,
+        marginLeft: 13,
+        fontSize: 10,
+        color: '#ffffff',
+        textAlign: 'left',
+        fontFamily: 'NunitoSans-Bold'
+    },
+});
