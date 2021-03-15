@@ -16,9 +16,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useTheme } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
+import colors from '../../components/theme/colors'
 
-
-
+import { getLogedIn, setLogedIn } from '../../utilities';
 
 export default class Splash extends React.Component {
   constructor(props) {
@@ -29,7 +29,7 @@ export default class Splash extends React.Component {
   }
 
 
-  componentDidMount() {
+  async componentDidMount() {
     Animated.timing(this.state.progress, {
       toValue: 1,
       duration: 5000,
@@ -45,18 +45,17 @@ export default class Splash extends React.Component {
 
 
   initPage = async () => {
-    AsyncStorage.getItem('rem').then((value) => {
-      if (value == 'login') {
-        this.props.navigation.navigate('Welcome');
+    var value_ = await getLogedIn()
+    console.warn(value_)
+    if (value_ == 'login') {
+      this.props.navigation.navigate('Protected');
 
-      } else if (value == null) {
-        this.props.navigation.navigate('Welcome');
-      }
-      else {
-        this.props.navigation.navigate('Welcome');
-      }
-
-    })
+    } else if (value_ == null) {
+      this.props.navigation.navigate('Welcome');
+    }
+    else {
+      this.props.navigation.navigate('Welcome');
+    }
 
   }
 
@@ -78,8 +77,8 @@ export default class Splash extends React.Component {
             />
 
           </View>
-          <Text style={{ color: '#fff', fontFamily: 'Poppins-Bold', fontSize: 20, marginBottom: 2, marginTop: 2}}>  NAME HERE</Text>
-                
+          <Text style={{ color: '#fff', fontFamily: 'Poppins-Bold', fontSize: 20, marginBottom: 2, marginTop: 2 }}>  NAME HERE</Text>
+
         </Animatable.View>
       </View>
     );
@@ -93,13 +92,13 @@ const height_logo = height * 0.28;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#415c5a'
+    backgroundColor: colors.white
   },
- 
+
   footer: {
     flex: 1,
-justifyContent:'center',
-alignItems:'center',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingVertical: 50,

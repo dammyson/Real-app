@@ -19,14 +19,15 @@ export const getRefresheToken = async () => {
 };
 
 
-export const setIsFirst =  () => {
-  return AsyncStorage.getItem('isFirst')
+export const setLogedIn =  (token) => {
+  return AsyncStorage.setItem('rem', token)
 };
-export const getIsFirst = async () => {
-  return AsyncStorage.getItem('isFirst')
+export const getLogedIn = async () => {
+  return AsyncStorage.getItem('rem')
 };
 
-export const setUserId =  (id) => {
+export const setUserId = (id) => {
+  console.warn(id);
   AsyncStorage.setItem('user_id', id);
 };
 export const getUserId = async () => {
@@ -56,8 +57,8 @@ export const getUser = async () => {
 
 export const getLogout = () => {
   try {
-    AsyncStorage.removeItem('curr');
-    AsyncStorage.removeItem('cards');
+    AsyncStorage.removeItem('access_token');
+    AsyncStorage.removeItem('refresh_token');
     AsyncStorage.removeItem('token');
     AsyncStorage.removeItem('rem');
     return true;

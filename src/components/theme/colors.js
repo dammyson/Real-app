@@ -1,6 +1,6 @@
 'use strict'
     const colors = {
-      primary_color: '#e7612f',
+      primary_color: '#F4423C',
       button_blue: '#0f0e43',
       bg:'415c5a',
       deep_blue: '#0300ad',
@@ -12,7 +12,8 @@
       white: '#FFFFFF',
       black: '#000',
       grey:'#EFF2F5',
-      placeholder_color: '#e7612f50',
+      placeholder_color: '#D1D3D2',
+      textinput_bg: '#666C68',
     }
 
 export default colors

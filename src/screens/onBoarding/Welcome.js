@@ -16,7 +16,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useTheme } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 
-
+import colors from '../../components/theme/colors'
 
 
 export default class Welcome extends React.Component {
@@ -40,7 +40,7 @@ export default class Welcome extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <StatusBar backgroundColor='#415c5a' barStyle="light-content" />
+        <StatusBar backgroundColor={colors.primary_color} barStyle="light-content" />
         <View style={styles.header}>
 
         <LottieView style={{width:200}}
@@ -56,13 +56,13 @@ export default class Welcome extends React.Component {
           animation="fadeInUpBig"
         >
           <Text style={[styles.title, {
-            color:'grey'
+            color:colors.primary_color
           }]}>Stay connected with everyone!</Text>
           <Text style={styles.text}>Sign in with account</Text>
           <View style={styles.button}>
             <TouchableOpacity onPress={() => this.props.navigation.navigate('SignIn')}>
               <LinearGradient
-                colors={['#415c5a', '#01ab9d']}
+                colors={[colors.primary_color, colors.primary_color]}
                 style={styles.signIn}
               >
                 <Text style={styles.textSign}>Get Started</Text>
@@ -87,7 +87,8 @@ const height_logo = height * 0.28;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#415c5a'
+    backgroundColor: colors.white
+
   },
   header: {
     flex: 2,

@@ -1,6 +1,6 @@
 import { userActions } from '../constants'
 import { SHOW_LOADER, HIDE_LOADER } from './loaderAction'
-import { baseUrl, setToken, setRefresheToken, setIsFirst, setUserId, processResponse } from '../utilities';
+import { baseUrl, setToken, setRefresheToken, setLogedIn, setUserId, processResponse } from '../utilities';
 import axios from 'axios'
 
 export const LoginRequest = (email, password) => {
@@ -19,11 +19,12 @@ export const LoginRequest = (email, password) => {
             .then(processResponse)
             .then(res => {
                 const { statusCode, data } = res;
+                console.warn(statusCode, data );
                 if (statusCode === 200) {
                     setToken(data.access_token)
                     setRefresheToken(data.refresh_token)
-                    setIsFirst('yes')
-                    setUserId(data.id)
+                    setLogedIn('login')
+                    setUserId(data.userId)
                     dispatch(LoginSuccess(data))
                     dispatch(HIDE_LOADER())
                 } else if (statusCode === 422) {

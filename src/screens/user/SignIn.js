@@ -80,22 +80,12 @@ class SignInScreen extends Component {
                                         source={require('./house.json')} autoPlay loop
                                     />
                                 </View>
-                                <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 5, }}>
+                                <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center',  marginBottom: 15,  }}>
 
-                                    <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 16, marginBottom: 2, marginTop: 2 }}>Sign In</Text>
+                                    <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 25, marginBottom: 2, marginTop: 2 }}>Sign In</Text>
                                 </View>
 
                                 <View style={styles.textInputContainer}>
-                                    <View style={styles.text_icon}>
-                                        <Icon
-                                            name="email"
-                                            size={20}
-                                            type='entypo'
-                                            color={colors.primary_color}
-
-                                        />
-                                    </View>
-
                                     <View style={styles.input}>
                                         <TextInput
                                             placeholder="Email "
@@ -104,7 +94,7 @@ class SignInScreen extends Component {
                                             keyboardType='email-address'
                                             autoCapitalize="none"
                                             autoCorrect={false}
-                                            style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-SemiBold', }}
+                                            style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-Regular', }}
                                             onChangeText={(text) => this.validate(text)}
                                         />
                                     </View>
@@ -130,15 +120,6 @@ class SignInScreen extends Component {
                                 </View>
 
                                 <View style={styles.textInputContainer}>
-                                    <View style={styles.text_icon}>
-                                        <Icon
-                                            name="locked"
-                                            size={20}
-                                            type='fontisto'
-                                            color={colors.primary_color}
-
-                                        />
-                                    </View>
 
                                     <View style={styles.input}>
                                         <TextInput
@@ -149,7 +130,7 @@ class SignInScreen extends Component {
                                             secureTextEntry={this.state.secureTextEntry}
                                             autoCapitalize="none"
                                             autoCorrect={false}
-                                            style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-SemiBold', }}
+                                            style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-Regular', }}
                                             onChangeText={text => this.setState({ password: text })}
                                         />
                                     </View>
@@ -161,13 +142,13 @@ class SignInScreen extends Component {
                                             {!this.state.secureTextEntry ?
                                                 <Feather
                                                     name="eye-off"
-                                                    color="grey"
+                                                    color={colors.white}
                                                     size={20}
                                                 />
                                                 :
                                                 <Feather
                                                     name="eye"
-                                                    color="grey"
+                                                    color={colors.white}
                                                     size={20}
                                                 />
                                             }
@@ -175,16 +156,16 @@ class SignInScreen extends Component {
                                     </View>
                                 </View>
 
-                                <View style={{ marginLeft: 20, marginRight: 20, flexDirection: 'row', marginBottom: 1, }}>
-                                    <TouchableOpacity onPress={() => this.props.navigation.navigate('ForgetPassword')} style={{ flex: 1, alignItems: 'center' }}>
-                                        <Text style={{ color: '#193a4d', fontFamily: 'Poppins-Medium', fontSize: 12, marginBottom: 7, marginTop: 7 }}>Can't log in?</Text>
+                                <View style={{ marginLeft: 20, marginRight: 20,  marginBottom: 1, }}>
+                                    <TouchableOpacity onPress={() => this.props.navigation.navigate('ForgetPassword')} style={{ }}>
+                                        <Text style={{ color: '#193a4d', fontFamily: 'Poppins-Medium', fontSize: 12, marginBottom: 7, marginTop: 7 }}>forgot password ?</Text>
                                     </TouchableOpacity>
                                 </View>
-                                <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={[colors.primary_color, colors.primary_color,]} style={styles.buttonContainer} block iconLeft>
-                                    <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() => this.loginRequest()} >
+                                <View style={{ marginLeft: 20, marginRight: 20, flexDirection: 'row', marginBottom: 1, justifyContent: 'center', }}>
+                                    <TouchableOpacity style={styles.buttonContainer} onPress={() => this.loginRequest()} >
                                         <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#fff', fontSize: 14 }}>Log in</Text>
                                     </TouchableOpacity>
-                                </LinearGradient>
+                                </View>
 
                                 <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 10, }}>
                                     <View style={{ alignItems: 'center' }}>
@@ -233,7 +214,7 @@ const styles = StyleSheet.create({
     },
     backgroundImage: {
         width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
+
     },
     mainbody: {
         width: Dimensions.get('window').width,
@@ -242,27 +223,21 @@ const styles = StyleSheet.create({
     },
     textInputContainer: {
         flexDirection: 'row',
-        marginRight: 30,
-        marginLeft: 30,
+        marginRight: 20,
+        marginLeft: 20,
         height: 40,
-        borderColor: '#3E3E3E',
+        borderRadius: 12,
         marginBottom: 15,
-        marginTop: 20,
+        marginTop: 5,
         paddingLeft: 12,
-        borderBottomWidth: 0.6,
-        borderBottomColor: colors.primary_color,
+        backgroundColor: colors.textinput_bg,
     },
     input: {
         flex: 1,
-        marginLeft: 15,
-    },
-    text_icon: {
-        padding: 10,
-        borderRightWidth: 0.6,
-        borderRightColor: colors.primary_color,
-        alignItems: 'center',
+        marginLeft: 10,
         justifyContent: 'center',
     },
+
     operation_icon: {
         padding: 10,
         alignItems: 'center',
@@ -282,10 +257,14 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular'
     },
     buttonContainer: {
+        width: Dimensions.get('window').width / 3,
         height: 50,
         marginRight: 30,
         marginLeft: 30,
         marginTop: 13,
         borderRadius: 15,
+        backgroundColor: colors.primary_color,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });
