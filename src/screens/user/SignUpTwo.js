@@ -4,7 +4,7 @@ import {
     Text,
     TouchableOpacity,
     TextInput,
-    AsyncStorage,
+    ImageBackground,
     StyleSheet,
     StatusBar,
     Alert,
@@ -19,11 +19,11 @@ import { Container, Content } from 'native-base';
 import { navigation } from '../../../rootNavigation'
 import { connect } from 'react-redux'
 import { RegisterRequest } from '../../actions/userActions'
-
+import * as images from '../../assets';
 
 import Users from './user';
 import ActivityIndicator from '../../components/views/ActivityIndicator';
-import { baseUrl, processResponse } from '../../utilities';
+import { baseUrl, setToken, setRefresheToken, setLogedIn, setUserId, processResponse } from '../../utilities';
 
 
 class SignUpTwo extends Component {
@@ -65,8 +65,32 @@ class SignUpTwo extends Component {
             password_confirmation: confirm_password,
             clientBaseUrl: 'https://lottiefiles.com/search?q=loading+house&category=animations&animations-page=3',
         });
-        const { RegisterPostRequest } = this.props
-        RegisterPostRequest(formData)
+      
+
+        this.setState({ loading: true })
+        fetch(baseUrl() + 'users', {
+            method: 'POST', headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+            }, body: formData,
+        })
+            .then(processResponse)
+            .then(res => {
+                console.warn(res);
+                const { statusCode, data } = res;
+                console.warn(res)
+                if (statusCode == 200) {
+                    this.setState({ loading: false })
+                    setUserId(data.userId)
+                    this.props.navigation.navigate('SignIn') 
+                } else {
+                    this.setState({ loading: false })
+                }
+            }).catch((error) => {
+                this.setState({ loading: false })
+                console.warn(error);
+                alert(error.message);
+            });
       }
 
 
@@ -74,37 +98,19 @@ class SignUpTwo extends Component {
 
 
         return (
-            <View style={styles.container}>
-                <StatusBar backgroundColor='#fff' barStyle="dark-content" />
+            <ImageBackground source={images.signup_bg} style={{flex:1}}>
+                <StatusBar translucent backgroundColor='transparent' barStyle="light-content" />
                 <Container style={{ backgroundColor: 'transparent' }}>
                     <Content>
                         <View style={styles.backgroundImage}>
                             <View style={styles.mainbody}>
-
-
-
-                                <View style={styles.sideContent}>
-                                    <LottieView style={{ width: 180 }}
-                                        source={require('./house.json')} autoPlay loop
-                                    />
-                                </View>
-
-                                <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 5, }}>
+                                <View style={{ marginLeft: 20, marginRight: 20,  flexDirection: 'row', marginBottom: 5, }}>
                                
-                                        <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 16, marginBottom: 2, marginTop: 2}}>Complete  Sign Up</Text>
+                                        <Text style={{ color: colors.white, fontFamily: 'Poppins-Bold', fontSize: 22, marginBottom: 2, marginTop: 2}}>Complete  Sign Up</Text>
                                 </View>
 
                                 <View style={styles.textInputContainer}>
-                                    <View style={styles.text_icon}>
-                                        <Icon
-                                            name="mobile-phone"
-                                            size={23}
-                                            type='font-awesome'
-                                            color={colors.primary_color}
-
-                                        />
-                                    </View>
-
+                                  
                                     <View style={styles.input}>
                                         <TextInput
                                             placeholder="Phone "
@@ -113,7 +119,7 @@ class SignUpTwo extends Component {
                                             keyboardType='default'
                                             autoCapitalize="none"
                                             autoCorrect={false}
-                                            style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-SemiBold', }}
+                                            style={{ flex: 1, fontSize: 12, color: colors.white, fontFamily: 'Poppins-SemiBold', }}
                                             onChangeText={(text) => this.setState({phone: text})}
                                             onSubmitEditing={() => this.fnameInput.focus()}
                                         />
@@ -122,16 +128,7 @@ class SignUpTwo extends Component {
                                 </View>
 
                                 <View style={styles.textInputContainer}>
-                                    <View style={styles.text_icon}>
-                                        <Icon
-                                            name="user"
-                                            size={20}
-                                            type='entypo'
-                                            color={colors.primary_color}
-
-                                        />
-                                    </View>
-
+                                   
                                     <View style={styles.input}>
                                         <TextInput
                                             placeholder="First Name "
@@ -140,7 +137,7 @@ class SignUpTwo extends Component {
                                             keyboardType='email-address'
                                             autoCapitalize="none"
                                             autoCorrect={false}
-                                            style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-SemiBold', }}
+                                            style={{ flex: 1, fontSize: 12, color: colors.white, fontFamily: 'Poppins-SemiBold', }}
                                             ref={(input)=> this.fnameInput = input}
                                             onChangeText={(text) => this.setState({fname: text})}
                                             onSubmitEditing={() => this.lnameInput.focus()}
@@ -151,16 +148,7 @@ class SignUpTwo extends Component {
                                 </View>
 
                                 <View style={styles.textInputContainer}>
-                                    <View style={styles.text_icon}>
-                                        <Icon
-                                            name="user"
-                                            size={20}
-                                            type='entypo'
-                                            color={colors.primary_color}
-
-                                        />
-                                    </View>
-
+                                
                                     <View style={styles.input}>
                                         <TextInput
                                             placeholder="Last Name "
@@ -169,7 +157,7 @@ class SignUpTwo extends Component {
                                             keyboardType='email-address'
                                             autoCapitalize="none"
                                             autoCorrect={false}
-                                            style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-SemiBold', }}
+                                            style={{ flex: 1, fontSize: 12, color: colors.white, fontFamily: 'Poppins-SemiBold', }}
                                             ref={(input)=> this.lnameInput = input}
                                             onChangeText={(text) => this.setState({lname: text})}
                                             onSubmitEditing={() => this.SignUpRequest()}
@@ -179,16 +167,19 @@ class SignUpTwo extends Component {
                                 </View>
 
                              
-                                <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={[colors.primary_color, colors.primary_color]} style={styles.buttonContainer} block iconLeft>
-                                    <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() => this.SignUpRequest()} >
-                                        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#fff', fontSize: 14 }}>Create account</Text>
+                             
+
+                                <View style={{ marginLeft: 20, marginRight: 20, flexDirection: 'row', marginBottom: 1, justifyContent: 'center', }}>
+                                    <TouchableOpacity style={styles.buttonContainer} onPress={() => this.SignUpRequest()} >
+                                        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#fff', fontSize: 14 }}>Next</Text>
                                     </TouchableOpacity>
-                                </LinearGradient>
+                                </View>
+
 
                                 <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 10, marginTop:10 }}>
                                    
                                     <TouchableOpacity onPress={() =>this.props.navigation.goBack()} style={{ alignItems: 'center' }}>
-                                        <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 13, marginBottom: 7, marginTop: 7 }}> Previous</Text>
+                                        <Text style={{ color: colors.white, fontFamily: 'Poppins-Bold', fontSize: 13, marginBottom: 7, marginTop: 7 }}> Previous</Text>
                                     </TouchableOpacity>
                                 </View>
 
@@ -200,7 +191,7 @@ class SignUpTwo extends Component {
                     </Content>
                 </Container>
                 {this.state.loading ? <ActivityIndicator /> : null}
-            </View>
+            </ImageBackground>
         );
     };
 
@@ -234,23 +225,24 @@ const styles = StyleSheet.create({
     mainbody: {
         width: Dimensions.get('window').width,
         flex: 1,
+        backgroundColor:'#00000099',
         justifyContent: 'center'
     },
     textInputContainer: {
         flexDirection: 'row',
-        marginRight: 30,
-        marginLeft: 30,
+        marginRight: 20,
+        marginLeft: 20,
         height: 40,
-        borderColor: '#3E3E3E',
+        borderRadius: 12,
         marginBottom: 15,
-        marginTop: 20,
+        marginTop: 5,
         paddingLeft: 12,
-        borderBottomWidth: 0.6,
-        borderBottomColor: colors.primary_color,
+        backgroundColor: colors.textinput_bg,
     },
     input: {
         flex: 1,
-        marginLeft: 15,
+        marginLeft: 10,
+        justifyContent: 'center',
     },
     text_icon: {
         padding: 10,
@@ -278,11 +270,15 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular'
     },
     buttonContainer: {
+        width: Dimensions.get('window').width / 3,
         height: 50,
         marginRight: 30,
         marginLeft: 30,
         marginTop: 13,
         borderRadius: 15,
+        backgroundColor: colors.primary_color,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     terms_container: {
         flexDirection: 'row',

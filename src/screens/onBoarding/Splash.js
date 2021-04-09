@@ -12,11 +12,7 @@ import {
   AsyncStorage
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import LinearGradient from 'react-native-linear-gradient';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useTheme } from '@react-navigation/native';
-import LottieView from 'lottie-react-native';
-import colors from '../../components/theme/colors'
+import * as images from '../../assets';
 
 import { getLogedIn, setLogedIn } from '../../utilities';
 
@@ -48,7 +44,8 @@ export default class Splash extends React.Component {
     var value_ = await getLogedIn()
     console.warn(value_)
     if (value_ == 'login') {
-      this.props.navigation.navigate('Protected');
+      this.props.navigation.navigate('Welcome');
+      //this.props.navigation.navigate('Protected');
 
     } else if (value_ == null) {
       this.props.navigation.navigate('Welcome');
@@ -63,8 +60,7 @@ export default class Splash extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <StatusBar backgroundColor='#415c5a' barStyle="light-content" />
-
+        <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
         <Animatable.View
           style={[styles.footer, {
           }]}
@@ -72,12 +68,10 @@ export default class Splash extends React.Component {
         >
 
           <View >
-            <LottieView style={{ width: 200 }}
-              source={require('../user/house.json')} autoPlay loop
-            />
+          <Image source={images.logo} style={styles.imageStyle} />
 
           </View>
-          <Text style={{ color: '#fff', fontFamily: 'Poppins-Bold', fontSize: 20, marginBottom: 2, marginTop: 2 }}>  NAME HERE</Text>
+          
 
         </Animatable.View>
       </View>
@@ -92,7 +86,7 @@ const height_logo = height * 0.28;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white
+    backgroundColor:'#000'
   },
 
   footer: {

@@ -4,7 +4,7 @@ import {
     Text,
     TouchableOpacity,
     TextInput,
-    Platform,
+    ImageBackground,
     StyleSheet,
     StatusBar,
     Alert,
@@ -19,8 +19,10 @@ import { Container, Content } from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
 import { useTheme } from 'react-native-paper';
 import { baseUrl, processResponse } from '../../utilities';
+import * as images from '../../assets';
 
 import Users from './user';
+import ActivityIndicator from '../../components/views/ActivityIndicator';
 
 
 
@@ -48,7 +50,7 @@ export default class SignInScreen extends Component {
         }
         else {
             this.setState({ email: text, is_valide_mail: true })
-            
+
         }
     }
 
@@ -58,8 +60,9 @@ export default class SignInScreen extends Component {
 
     processStepOne() {
         const { email, password, confirm_password, is_valide_mail, agree } = this.state
+        console.warn( email, password, confirm_password, is_valide_mail, agree)
         if (email == "" || password == "" || password.length < 8) {
-            Alert.alert('Validation failed', 'Phone field cannot be empty', [{ text: 'Okay' }])
+            Alert.alert('Validation failed', 'All fields must be filled', [{ text: 'Okay' }])
             return
         }
         if (!is_valide_mail) {
@@ -67,52 +70,39 @@ export default class SignInScreen extends Component {
             return
         }
         if (confirm_password != password) {
-            Alert.alert('Validation failed', 'Phone field cannot be empty', [{ text: 'Okay' }])
+            Alert.alert('Validation failed', 'Passwords does not match', [{ text: 'Okay' }])
             return
         }
         if (!agree) {
             Alert.alert('Validation failed', 'You must accept or termps and conditions', [{ text: 'Okay' }])
             return
         }
-        var payload ={ email: email, password: password, confirm_password: confirm_password }
+        var payload = { email: email, password: password, confirm_password: confirm_password }
         this.props.navigation.navigate('SignUpTwo', payload)
     }
 
 
     render() {
-
+        if (this.state.loading) {
+            return (
+                <ActivityIndicator />
+            )
+        }
 
         return (
-            <View style={styles.container}>
-                <StatusBar backgroundColor='#fff' barStyle="dark-content" />
+            <ImageBackground source={images.signup_bg} style={{ flex: 1 }}>
+                <StatusBar translucent backgroundColor='transparent' barStyle="light-content" />
                 <Container style={{ backgroundColor: 'transparent' }}>
                     <Content>
                         <View style={styles.backgroundImage}>
                             <View style={styles.mainbody}>
 
 
-
-                                <View style={styles.sideContent}>
-                                    <LottieView style={{ width: 180 }}
-                                        source={require('./house.json')} autoPlay loop
-                                    />
-                                </View>
-
-                                <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 5, }}>
-
-                                    <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 16, marginBottom: 2, marginTop: 2 }}>  Sign UP</Text>
+                                <View style={{ marginLeft: 20, marginRight: 20, alignItems: 'center', flexDirection: 'row', marginBottom: 5, }}>
+                                    <Text style={{ color: colors.white, fontFamily: 'Poppins-Bold', fontSize: 20, marginBottom: 2, marginTop: 2 }}>  Sign UP</Text>
                                 </View>
 
                                 <View style={styles.textInputContainer}>
-                                    <View style={styles.text_icon}>
-                                        <Icon
-                                            name="email"
-                                            size={20}
-                                            type='entypo'
-                                            color={colors.primary_color}
-
-                                        />
-                                    </View>
 
                                     <View style={styles.input}>
                                         <TextInput
@@ -123,7 +113,7 @@ export default class SignInScreen extends Component {
                                             autoCapitalize="none"
                                             autoCorrect={false}
                                             defaultValue={this.state.email}
-                                            style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-SemiBold', }}
+                                            style={{ flex: 1, fontSize: 12, color: colors.white, fontFamily: 'Poppins-Regular', }}
                                             onChangeText={(text) => this.validate(text)}
                                             onSubmitEditing={() => this.passwordInput.focus()}
                                         />
@@ -150,15 +140,6 @@ export default class SignInScreen extends Component {
                                 </View>
 
                                 <View style={styles.textInputContainer}>
-                                    <View style={styles.text_icon}>
-                                        <Icon
-                                            name="locked"
-                                            size={20}
-                                            type='fontisto'
-                                            color={colors.primary_color}
-
-                                        />
-                                    </View>
 
                                     <View style={styles.input}>
                                         <TextInput
@@ -170,7 +151,7 @@ export default class SignInScreen extends Component {
                                             autoCapitalize="none"
                                             autoCorrect={false}
                                             defaultValue={this.state.password}
-                                            style={{ flex: 1, fontSize: 12, color:colors.primary_color, fontFamily: 'Poppins-SemiBold', }}
+                                            style={{ flex: 1, fontSize: 12, color: colors.white, fontFamily: 'Poppins-Regular', }}
                                             ref={(input) => this.passwordInput = input}
                                             onChangeText={text => this.setState({ password: text })}
                                             onSubmitEditing={() => this.cpasswordInput.focus()}
@@ -199,15 +180,7 @@ export default class SignInScreen extends Component {
                                 </View>
 
                                 <View style={styles.textInputContainer}>
-                                    <View style={styles.text_icon}>
-                                        <Icon
-                                            name="locked"
-                                            size={20}
-                                            type='fontisto'
-                                            color={colors.primary_color}
 
-                                        />
-                                    </View>
 
                                     <View style={styles.input}>
                                         <TextInput
@@ -219,7 +192,7 @@ export default class SignInScreen extends Component {
                                             autoCapitalize="none"
                                             autoCorrect={false}
                                             defaultValue={this.state.confirm_password}
-                                            style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-SemiBold', }}
+                                            style={{ flex: 1, fontSize: 12, color: colors.white, fontFamily: 'Poppins-Regular', }}
                                             ref={(input) => this.cpasswordInput = input}
                                             onChangeText={text => this.setState({ confirm_password: text })}
                                             onSubmitEditing={() => this.processStepOne()}
@@ -253,7 +226,7 @@ export default class SignInScreen extends Component {
                                                 name="checkbox-passive"
                                                 type='fontisto'
                                                 size={15}
-                                                color={colors.primary_color}
+                                                color={colors.white}
                                             />
                                         </TouchableOpacity>
                                         :
@@ -262,27 +235,29 @@ export default class SignInScreen extends Component {
                                                 name="checkbox-active"
                                                 type='fontisto'
                                                 size={15}
-                                                color={colors.primary_color}
+                                                color={colors.white}
                                             />
                                         </TouchableOpacity>
                                     }
-                                    <Text style={{ color: colors.secondary_color, fontSize: 12, fontWeight: '200', marginLeft: 5 }}>I have read and accepted the </Text>
+                                    <Text style={{ color: colors.white, fontSize: 12, fontWeight: '200', marginLeft: 5 }}>I have read and accepted the </Text>
                                     <TouchableOpacity onPress={() => this.setState({ show_terms: true })} >
-                                        <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-SemiBold',  fontSize: 12, fontWeight: '400' }}>Terms & Conditions  </Text>
+                                        <Text style={{ color: colors.white, fontFamily: 'Poppins-SemiBold', fontSize: 12, fontWeight: '400' }}>Terms & Conditions  </Text>
                                     </TouchableOpacity>
                                 </View>
-                                <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={[colors.primary_color, colors.primary_color]} style={styles.buttonContainer} block iconLeft>
-                                    <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() => this.processStepOne()}>
+
+
+                                <View style={{ marginLeft: 20, marginRight: 20, flexDirection: 'row', marginBottom: 1, justifyContent: 'center', }}>
+                                    <TouchableOpacity style={styles.buttonContainer} onPress={() => this.processStepOne()} >
                                         <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#fff', fontSize: 14 }}>Next</Text>
                                     </TouchableOpacity>
-                                </LinearGradient>
+                                </View>
 
                                 <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 10, }}>
                                     <View style={{ alignItems: 'center' }}>
-                                        <Text style={{ color:colors.secondary_color, fontFamily: 'Poppins-Medium', fontSize: 12, marginBottom: 7, marginTop: 7 }}>Already a member?</Text>
+                                        <Text style={{ color: colors.white, fontFamily: 'Poppins-Medium', fontSize: 12, marginBottom: 7, marginTop: 7 }}>Already a member?</Text>
                                     </View>
                                     <TouchableOpacity onPress={() => this.props.navigation.navigate('SignIn')} style={{ alignItems: 'center' }}>
-                                        <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 13, marginBottom: 7, marginTop: 7 }}>  Sign In!</Text>
+                                        <Text style={{ color: colors.white, fontFamily: 'Poppins-Bold', fontSize: 13, marginBottom: 7, marginTop: 7 }}>  Sign In!</Text>
                                     </TouchableOpacity>
                                 </View>
 
@@ -294,7 +269,7 @@ export default class SignInScreen extends Component {
                     </Content>
                 </Container>
 
-            </View>
+            </ImageBackground>
         );
     };
 
@@ -314,23 +289,24 @@ const styles = StyleSheet.create({
     mainbody: {
         width: Dimensions.get('window').width,
         flex: 1,
+        backgroundColor: '#26262699',
         justifyContent: 'center'
     },
     textInputContainer: {
         flexDirection: 'row',
-        marginRight: 30,
-        marginLeft: 30,
+        marginRight: 20,
+        marginLeft: 20,
         height: 40,
-        borderColor: '#3E3E3E',
+        borderRadius: 12,
         marginBottom: 15,
-        marginTop: 20,
+        marginTop: 5,
         paddingLeft: 12,
-        borderBottomWidth: 0.6,
-        borderBottomColor: colors.primary_color,
+        backgroundColor: colors.textinput_bg,
     },
     input: {
         flex: 1,
-        marginLeft: 15,
+        marginLeft: 10,
+        justifyContent: 'center',
     },
     text_icon: {
         padding: 10,
@@ -358,11 +334,15 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular'
     },
     buttonContainer: {
+        width: Dimensions.get('window').width / 3,
         height: 50,
         marginRight: 30,
         marginLeft: 30,
         marginTop: 13,
         borderRadius: 15,
+        backgroundColor: colors.primary_color,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     terms_container: {
         flexDirection: 'row',

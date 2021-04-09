@@ -4,7 +4,7 @@ import {
     Text,
     TouchableOpacity,
     TextInput,
-    Platform,
+    Image,
     StyleSheet,
     StatusBar,
     Alert,
@@ -17,16 +17,15 @@ import LottieView from 'lottie-react-native';
 import colors from '../../components/theme/colors'
 import { Container, Content } from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
-import { navigation } from '../../../rootNavigation'
-import { connect } from 'react-redux'
-import { ChangePasswordRequest } from '../../actions/userActions'
-import { getToken, } from '../../utilities';
+import ActivityIndicator from '../../components/views/ActivityIndicator';
+import { baseUrl, setToken, setRefresheToken, setLogedIn, setUserId, processResponse } from '../../utilities';
+import * as images from '../../assets';
 
-class ChangePassword extends Component {
+export default class ChangePassword extends Component {
     constructor(props) {
         super(props);
         this.state = {
-          
+
             code: '',
             password: '',
             confirm_password: '',
@@ -50,7 +49,7 @@ class ChangePassword extends Component {
 
     async ChangePasswordRequest() {
 
-        const { code, password, confirm_password,  } = this.state
+        const { code, password, confirm_password, } = this.state
         if (code == "" || password == "" || password.length < 8) {
             Alert.alert('Validation failed', 'Phone field cannot be empty', [{ text: 'Okay' }])
             return
@@ -65,12 +64,43 @@ class ChangePassword extends Component {
             password: password,
             password_confirmation: confirm_password,
         });
-        const { ChangePasswordPostRequest } = this.props
-        ChangePasswordPostRequest(formData,await getToken())
-      }
+      
+      
+
+        this.setState({ loading: true })
+        fetch(baseUrl() + 'auth/ResetPassword', {
+            method: 'POST', headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+            }, body: formData,
+        })
+            .then(processResponse)
+            .then(res => {
+                console.warn(res);
+                const { statusCode, data } = res;
+                console.warn(res)
+                if (statusCode == 200) {
+                    this.setState({ loading: false })
+                    this.props.navigation.navigate('SignIn') 
+                } else {
+                    this.setState({ loading: false })
+                }
+            }).catch((error) => {
+                this.setState({ loading: false })
+                console.warn(error);
+                alert(error.message);
+            });
+
+
+
+    }
 
     render() {
-
+        if (this.state.loading) {
+            return (
+                <ActivityIndicator />
+            )
+        }
 
         return (
             <View style={styles.container}>
@@ -79,175 +109,161 @@ class ChangePassword extends Component {
                     <Content>
                         <View style={styles.backgroundImage}>
                             <View style={styles.mainbody}>
+                                < View style={{ flex: 1, justifyContent: 'center', }}>
 
 
-
-                                <View style={styles.sideContent}>
-                                    <LottieView style={{ width: 180 }}
-                                        source={require('./house.json')} autoPlay loop
-                                    />
-                                </View>
-
-                                <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 5, }}>
-                               
-                                        <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 16, marginBottom: 2, marginTop: 2}}>  Change Password</Text>
-                                </View>
-
-                                <View style={styles.textInputContainer}>
-                                    <View style={styles.text_icon}>
-                                    <Icon
-                                            name="locked"
-                                            size={20}
-                                            type='fontisto'
-                                            color={colors.primary_color}
-
-                                        />
+                                    <View style={styles.sideContent}>
+                                        <Image source={images.key} style={styles.logoStyle} />
                                     </View>
 
-                                    <View style={styles.input}>
-                                        <TextInput
-                                            placeholder="Code "
-                                            placeholderTextColor={ colors.placeholder_color}
-                                            returnKeyType="next"
-                                            keyboardType="numeric"
-                                            autoCapitalize="none"
-                                            autoCorrect={false}
-                                            style={{ flex: 1, fontSize: 12, color:  colors.primary_color, fontFamily: 'Poppins-SemiBold', }}
-                                            onChangeText={text => this.setState({ code: text })}
-                                        />
+                                </ View>
+
+                                < View style={{ flex: 1.5, }}>
+
+
+
+
+
+                                    <View style={{ marginLeft: 20, marginRight: 20, alignItems: 'center', flexDirection: 'row', marginBottom: 5, }}>
+
+                                        <Text style={{ color: colors.black, fontFamily: 'Poppins-Bold', fontSize: 22, marginBottom: 2, marginTop: 2 }}>Reset Password</Text>
                                     </View>
 
 
-                                    <View style={styles.operation_icon}>
-                                        {this.state.is_valide_mail ?
-                                            <Animatable.View
-                                                animation="bounceIn"
+
+
+                                    <View style={{ marginLeft: 24, marginRight: 50, flexDirection: 'row', marginBottom: 1, }}>
+                                        <Text style={{ color: colors.secondary_color, fontFamily: 'Poppins-Regular', fontSize: 12, marginBottom: 7, marginTop: 7 }}>Set the new password for your account so you can access all features.</Text>
+                                    </View>
+                                    <View style={styles.textInputContainer}>
+
+
+                                        <View style={styles.input}>
+                                            <TextInput
+                                                placeholder="Code "
+                                                placeholderTextColor={colors.placeholder_color}
+                                                returnKeyType="next"
+                                                keyboardType="numeric"
+                                                autoCapitalize="none"
+                                                autoCorrect={false}
+                                                style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-Regular', }}
+                                                onChangeText={text => this.setState({ code: text })}
+                                            />
+                                        </View>
+
+
+                                        <View style={styles.operation_icon}>
+                                            {this.state.is_valide_mail ?
+                                                <Animatable.View
+                                                    animation="bounceIn"
+                                                >
+                                                    <Icon
+                                                        name="check-circle"
+                                                        color="green"
+                                                        size={20}
+                                                        type='feather'
+
+
+                                                    />
+                                                </Animatable.View>
+                                                : null}
+
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.textInputContainer}>
+
+                                        <View style={styles.input}>
+                                            <TextInput
+                                                placeholder="New Password "
+                                                placeholderTextColor={colors.placeholder_color}
+                                                returnKeyType="next"
+                                                keyboardType="password"
+                                                secureTextEntry={this.state.secureTextEntry}
+                                                autoCapitalize="none"
+                                                autoCorrect={false}
+                                                style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-Regular', }}
+                                                onChangeText={text => this.setState({ password: text })}
+                                            />
+                                        </View>
+
+                                        <View style={styles.operation_icon}>
+                                            <TouchableOpacity
+                                                onPress={() => this.updateSecureTextEntry()}
                                             >
-                                                <Icon
-                                                    name="check-circle"
-                                                    color="green"
-                                                    size={20}
-                                                    type='feather'
-
-
-                                                />
-                                            </Animatable.View>
-                                            : null}
-
-                                    </View>
-                                </View>
-
-                                <View style={styles.textInputContainer}>
-                                    <View style={styles.text_icon}>
-                                        <Icon
-                                            name="locked"
-                                            size={20}
-                                            type='fontisto'
-                                            color={colors.primary_color}
-
-                                        />
+                                                {!this.state.secureTextEntry ?
+                                                    <Feather
+                                                        name="eye-off"
+                                                        color="grey"
+                                                        size={20}
+                                                    />
+                                                    :
+                                                    <Feather
+                                                        name="eye"
+                                                        color="grey"
+                                                        size={20}
+                                                    />
+                                                }
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
 
-                                    <View style={styles.input}>
-                                        <TextInput
-                                            placeholder="New Password "
-                                            placeholderTextColor={ colors.placeholder_color}
-                                            returnKeyType="next"
-                                            keyboardType="password"
-                                            secureTextEntry={this.state.secureTextEntry}
-                                            autoCapitalize="none"
-                                            autoCorrect={false}
-                                            style={{ flex: 1, fontSize: 12, color:  colors.primary_color, fontFamily: 'Poppins-SemiBold', }}
-                                            onChangeText={text => this.setState({ password: text })}
-                                        />
+                                    <View style={styles.textInputContainer}>
+
+                                        <View style={styles.input}>
+                                            <TextInput
+                                                placeholder="Confirm New Password "
+                                                placeholderTextColor={colors.placeholder_color}
+                                                returnKeyType="next"
+                                                keyboardType="password"
+                                                secureTextEntry={this.state.secureTextEntry}
+                                                autoCapitalize="none"
+                                                autoCorrect={false}
+                                                style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-Regular', }}
+                                                onChangeText={text => this.setState({ confirm_password: text })}
+                                            />
+                                        </View>
+
+                                        <View style={styles.operation_icon}>
+                                            <TouchableOpacity
+                                                onPress={() => this.updateSecureTextEntry()}
+                                            >
+                                                {!this.state.secureTextEntry ?
+                                                    <Feather
+                                                        name="eye-off"
+                                                        color="grey"
+                                                        size={20}
+                                                    />
+                                                    :
+                                                    <Feather
+                                                        name="eye"
+                                                        color="grey"
+                                                        size={20}
+                                                    />
+                                                }
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
 
-                                    <View style={styles.operation_icon}>
-                                        <TouchableOpacity
-                                            onPress={() => this.updateSecureTextEntry()}
-                                        >
-                                            {!this.state.secureTextEntry ?
-                                                <Feather
-                                                    name="eye-off"
-                                                    color="grey"
-                                                    size={20}
-                                                />
-                                                :
-                                                <Feather
-                                                    name="eye"
-                                                    color="grey"
-                                                    size={20}
-                                                />
-                                            }
+                                    <View style={{ marginLeft: 20, marginRight: 20, flexDirection: 'row', marginBottom: 1, justifyContent: 'center', }}>
+                                        <TouchableOpacity style={styles.buttonContainer} onPress={() => this.changePasswordRequest()} >
+                                            <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#fff', fontSize: 14 }}>Continue</Text>
                                         </TouchableOpacity>
                                     </View>
-                                </View>
 
-                                <View style={styles.textInputContainer}>
-                                    <View style={styles.text_icon}>
-                                        <Icon
-                                            name="locked"
-                                            size={20}
-                                            type='fontisto'
-                                            color={colors.primary_color}
-
-                                        />
-                                    </View>
-
-                                    <View style={styles.input}>
-                                        <TextInput
-                                            placeholder="Confirm New Password "
-                                            placeholderTextColor={ colors.placeholder_color}
-                                            returnKeyType="next"
-                                            keyboardType="password"
-                                            secureTextEntry={this.state.secureTextEntry}
-                                            autoCapitalize="none"
-                                            autoCorrect={false}
-                                            style={{ flex: 1, fontSize: 12, color:  colors.primary_color, fontFamily: 'Poppins-SemiBold', }}
-                                            onChangeText={text => this.setState({ confirm_password: text })}
-                                        />
-                                    </View>
-
-                                    <View style={styles.operation_icon}>
-                                        <TouchableOpacity
-                                            onPress={() => this.updateSecureTextEntry()}
-                                        >
-                                            {!this.state.secureTextEntry ?
-                                                <Feather
-                                                    name="eye-off"
-                                                    color="grey"
-                                                    size={20}
-                                                />
-                                                :
-                                                <Feather
-                                                    name="eye"
-                                                    color="grey"
-                                                    size={20}
-                                                />
-                                            }
+                                    <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 10, }}>
+                                        <View style={{ alignItems: 'center' }}>
+                                            <Text style={{ color: colors.secondary_color, fontFamily: 'Poppins-Medium', fontSize: 12, marginBottom: 7, marginTop: 7 }}>Want to cancel this ?</Text>
+                                        </View>
+                                        <TouchableOpacity onPress={() => this.props.navigation.navigate('SignIn')} style={{ alignItems: 'center' }}>
+                                            <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 13, marginBottom: 7, marginTop: 7 }}>  Sign In!</Text>
                                         </TouchableOpacity>
                                     </View>
+
+
                                 </View>
-                              
-                                <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={[ colors.primary_color,  colors.primary_color]} style={styles.buttonContainer} block iconLeft>
-                                    <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() => this.ChangePasswordRequest()} >
-                                        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#fff', fontSize: 14 }}>Continue</Text>
-                                    </TouchableOpacity>
-                                </LinearGradient>
-
-                                <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 10, }}>
-                                    <View style={{ alignItems: 'center' }}>
-                                        <Text style={{ color:  colors.secondary_color, fontFamily: 'Poppins-Medium', fontSize: 12, marginBottom: 7, marginTop: 7 }}>Want to cancel this ?</Text>
-                                    </View>
-                                    <TouchableOpacity onPress={() =>this.props.navigation.navigate('SignIn')} style={{ alignItems: 'center' }}>
-                                        <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 13, marginBottom: 7, marginTop: 7 }}>  Sign In!</Text>
-                                    </TouchableOpacity>
-                                </View>
-
-
                             </View>
                         </View>
-
 
                     </Content>
                 </Container>
@@ -258,19 +274,7 @@ class ChangePassword extends Component {
 
 }
 
-const mapStateToProps = state => {
-    state.user.user.message =='SignIn' ?
-    navigation.navigate('ChangePassword') : null 
-    return {
-        user: state.user
-    }
-}
-const mapDispatchToProps = (dispatch, props) => {
-    return {
-        ChangePasswordPostRequest: (email, token) => dispatch(ChangePasswordRequest(email, token))
-    }
-}
-export default connect(mapStateToProps, mapDispatchToProps)(ChangePassword);
+
 
 const styles = StyleSheet.create({
     container: {
@@ -292,20 +296,22 @@ const styles = StyleSheet.create({
         marginLeft: 30,
         height: 40,
         borderColor: '#3E3E3E',
-        marginBottom: 15,
-        marginTop: 20,
+        marginBottom: 10,
+        borderRadius: 15,
+        marginTop: 10,
         paddingLeft: 12,
-        borderBottomWidth: 0.6,
-        borderBottomColor:  colors.primary_color,
+        borderWidth: 0.6,
+        borderColor: colors.primary_color,
     },
     input: {
         flex: 1,
+        justifyContent: 'center',
         marginLeft: 15,
     },
     text_icon: {
         padding: 10,
         borderRightWidth: 0.6,
-        borderRightColor:  colors.primary_color,
+        borderRightColor: colors.primary_color,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -328,19 +334,19 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular'
     },
     buttonContainer: {
+        width: Dimensions.get('window').width / 2,
         height: 50,
         marginRight: 30,
         marginLeft: 30,
         marginTop: 13,
         borderRadius: 15,
-    },
-    terms_container: {
-        flexDirection: 'row',
-        marginLeft: 30,
-        marginRight: 30,
-        marginTop: 10,
-        marginBottom: 10,
+        backgroundColor: colors.primary_color,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    logoStyle: {
+        width: Dimensions.get('window').width / 1.3,
+        resizeMode: 'contain'
+
     },
 });

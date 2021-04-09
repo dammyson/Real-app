@@ -1,135 +1,101 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Dimensions,
-  StyleSheet,
-  StatusBar,
-  Image,
-  Animated, 
-  Easing
-} from 'react-native';
-import * as Animatable from 'react-native-animatable';
-import LinearGradient from 'react-native-linear-gradient';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useTheme } from '@react-navigation/native';
-import LottieView from 'lottie-react-native';
+import React, { Component } from 'react'
+import { AppRegistry, StyleSheet, Text, View } from 'react-native'
+import Swiper from 'react-native-swiper'
 
-import colors from '../../components/theme/colors'
+import StepOne from './StepOne';
+import StepTwo from './StepTwo';
+import StepThree from './StepThree';
 
 
-export default class Welcome extends React.Component {
+export default class Welcome extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
-      progress: new Animated.Value(0),
+      index: 0
     };
   }
 
-
-  componentDidMount() {
-    Animated.timing(this.state.progress, {
-      toValue: 1,
-      duration: 5000,
-      easing: Easing.linear,
-    }).start();
+  render() {
+    return (
+      <Swiper style={styles.wrapper}
+        index={this.state.index}
+        onIndexChanged={(index) => this.onIndexChanged(index)}
+        showsButtons={false}
+        ref={(swiper) => { this.swiper = swiper; }}
+        loop={false}
+        showsPagination ={false}
+      >
+        <View style={styles.slide1}>
+          <StepOne
+            onSkip={() => this.onSkip()}
+            onSignIn={() => this.onSignIn()}
+          />
+        </View>
+        <View style={styles.slide2}>
+          <StepTwo
+            onSkip={() => this.onSkip()}
+            onSignIn={() => this.onSignIn()} />
+        </View>
+        <View style={styles.slide3}>
+          <StepThree
+            onStarted={() => this.onStarted()}
+            onSignIn={() => this.onSignIn()} />
+        </View>
+      </Swiper>
+    )
   }
 
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <StatusBar backgroundColor={colors.primary_color} barStyle="light-content" />
-        <View style={styles.header}>
+  onIndexChanged(ind) {
 
-        <LottieView style={{width:200}}
-        source={require('../user/house.json')} autoPlay loop
-      />
-       <Text style={{ color: '#fff', fontFamily: 'Poppins-Bold', fontSize: 20, marginBottom: 2, marginTop: 2}}>  NAME HERE</Text>
-           
-        </View>
-        <Animatable.View
-          style={[styles.footer, {
-            backgroundColor: '#fff'
-          }]}
-          animation="fadeInUpBig"
-        >
-          <Text style={[styles.title, {
-            color:colors.primary_color
-          }]}>Stay connected with everyone!</Text>
-          <Text style={styles.text}>Sign in with account</Text>
-          <View style={styles.button}>
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('SignIn')}>
-              <LinearGradient
-                colors={[colors.primary_color, colors.primary_color]}
-                style={styles.signIn}
-              >
-                <Text style={styles.textSign}>Get Started</Text>
-                <MaterialIcons
-                  name="navigate-next"
-                  color="#fff"
-                  size={20}
-                />
-              </LinearGradient>
-            </TouchableOpacity>
-          </View>
-        </Animatable.View>
-      </View>
-    );
+    this.setState({ index: ind })
+  }
+  onSkip() {
+
+    if (this.state.index > 1) {
+      return
+    } else {
+      this.swiper.scrollBy(1, true);
+
+    }
+
+  }
+
+  onSignIn() {
+    this.props.navigation.navigate('SignIn')
+  }
+
+  onStarted() {
+    this.props.navigation.navigate('SignIn')
   }
 }
 
 
-const { height } = Dimensions.get("screen");
-const height_logo = height * 0.28;
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {},
+  slide1: {
     flex: 1,
-    backgroundColor: colors.white
-
-  },
-  header: {
-    flex: 2,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  footer: {
-    flex: 1,
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    paddingVertical: 50,
-    paddingHorizontal: 30
-  },
-  logo: {
-    width: height_logo,
-    height: height_logo
-  },
-  title: {
-    color: '#05375a',
-    fontSize: 30,
-    fontWeight: 'bold'
-  },
-  text: {
-    color: 'grey',
-    marginTop: 5
-  },
-  button: {
-    alignItems: 'flex-end',
-    marginTop: 30
-  },
-  signIn: {
-    width: 150,
-    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 50,
-    flexDirection: 'row'
+    backgroundColor: '#9DD6EB'
   },
-  textSign: {
-    color: 'white',
+  slide2: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#97CAE5'
+  },
+  slide3: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#92BBD9'
+  },
+  text: {
+    color: '#fff',
+    fontSize: 30,
     fontWeight: 'bold'
   }
-});
+})

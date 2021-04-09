@@ -4,27 +4,27 @@ import {
     Text,
     TouchableOpacity,
     TextInput,
-    Platform,
+    Image,
     StyleSheet,
     StatusBar,
     Alert,
     Dimensions
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import LinearGradient from 'react-native-linear-gradient';
 import { Icon } from 'react-native-elements';
-import LottieView from 'lottie-react-native';
 import colors from '../../components/theme/colors'
 import { Container, Content } from 'native-base';
-import { navigation } from '../../../rootNavigation'
-import { connect } from 'react-redux'
-import { ForgetPasswordRequest } from '../../actions/userActions'
-import { getToken, } from '../../utilities';
 
-class ForgetPassword extends Component {
+import * as images from '../../assets';
+
+import ActivityIndicator from '../../components/views/ActivityIndicator';
+import { baseUrl, setToken, setRefresheToken, setLogedIn, setUserId, processResponse } from '../../utilities';
+
+export default class ForgetPassword extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            loading:false,
             email: '',
             show_share: false,
             details: '',
@@ -46,12 +46,12 @@ class ForgetPassword extends Component {
         }
     }
 
- 
+
 
     async changePasswordRequest() {
-      
+
         const { email, is_valide_mail } = this.state
-        if (email == "" ) {
+        if (email == "") {
             Alert.alert('Validation failed', 'Email field cannot be empty', [{ text: 'Okay' }])
             return
         }
@@ -59,13 +59,45 @@ class ForgetPassword extends Component {
             Alert.alert('Validation failed', 'Email is invalid', [{ text: 'Okay' }])
             return
         }
-        const { ForgetPostRequest } = this.props
-        ForgetPostRequest(email, await getToken());
+
+
+        this.setState({ loading: true })
+        fetch(baseUrl() + 'auth/SendForgotPasswordToken', {
+            method: 'POST', headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+            }, body: JSON.stringify({
+                clientBaseUrl: baseUrl(),
+                email: email,
+            }),
+        })
+            .then(processResponse)
+            .then(res => {
+                console.warn(res);
+                const { statusCode, data } = res;
+                console.warn(res)
+                if (statusCode == 200) {
+                    this.setState({ loading: false })
+                    this.props.navigation.navigate('ChangePassword') 
+                } else {
+                    this.setState({ loading: false })
+                }
+            }).catch((error) => {
+                this.setState({ loading: false })
+                console.warn(error);
+                alert(error.message);
+            });
+
+
     }
 
     render() {
 
-
+        if (this.state.loading) {
+            return (
+                <ActivityIndicator />
+            )
+        }
         return (
             <View style={styles.container}>
                 <StatusBar backgroundColor='#fff' barStyle="dark-content" />
@@ -73,29 +105,28 @@ class ForgetPassword extends Component {
                     <Content>
                         <View style={styles.backgroundImage}>
                             <View style={styles.mainbody}>
+                                < View style={{flex: 1, justifyContent: 'center', }}>
 
 
 
                                 <View style={styles.sideContent}>
-                                    <LottieView style={{ width: 200 }}
-                                        source={require('./house.json')} autoPlay loop
-                                    />
+                                <Image source={images.lock} style={styles.logoStyle} />
                                 </View>
-                                <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 5, }}>
-                               
-                               <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 16, marginBottom: 2, marginTop: 2}}> Can't log in?</Text>
-                       </View>
+                                </View>
+                                <View style={{ marginLeft: 20, marginRight: 20, alignItems: 'center', flexDirection: 'row', marginBottom: 5, }}>
+
+                                    <Text style={{ color: colors.black, fontFamily: 'Poppins-Bold', fontSize: 22, marginBottom: 2, marginTop: 2 }}> Reset Password</Text>
+                                </View>
+
+                                < View style={{flex: 1}}>
+                              
+
+                                <View style={{ marginLeft: 24, marginRight: 50, flexDirection: 'row', marginBottom: 1, }}>
+                                    <Text style={{ color: colors.secondary_color, fontFamily: 'Poppins-Regular', fontSize: 12, marginBottom: 7, marginTop: 7 }}>Enter your email address to begin the verification process. We will send you a link.</Text>
+                                </View>
+
 
                                 <View style={styles.textInputContainer}>
-                                    <View style={styles.text_icon}>
-                                        <Icon
-                                            name="email"
-                                            size={20}
-                                            type='entypo'
-                                            color={colors.primary_color}
-
-                                        />
-                                    </View>
 
                                     <View style={styles.input}>
                                         <TextInput
@@ -105,7 +136,7 @@ class ForgetPassword extends Component {
                                             keyboardType="default"
                                             autoCapitalize="none"
                                             autoCorrect={false}
-                                            style={{ flex: 1, fontSize: 12, color: '#d1d1d1', fontFamily: 'Poppins-SemiBold', }}
+                                            style={{ flex: 1, fontSize: 12, color: '#000', fontFamily: 'Poppins-Regular', }}
                                             onChangeText={(text) => this.validate(text)}
                                         />
                                     </View>
@@ -130,31 +161,24 @@ class ForgetPassword extends Component {
                                     </View>
                                 </View>
 
-                               
-                                <View style={{ marginLeft: 20, marginRight: 20, flexDirection: 'row', marginBottom: 1, }}>
-                                    <TouchableOpacity onPress={() => goBack()} style={{ flex: 1, alignItems: 'center' }}>
-                                        <Text style={{ color: colors.secondary_color, fontFamily: 'Poppins-Medium', fontSize: 12, marginBottom: 7, marginTop: 7 }}>We'll send a recovery link to Email</Text>
+
+                                <View style={{ marginLeft: 20, marginRight: 20, flexDirection: 'row', marginBottom: 1, justifyContent: 'center', }}>
+                                    <TouchableOpacity style={styles.buttonContainer} onPress={() => this.changePasswordRequest()} >
+                                        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#fff', fontSize: 14 }}>Reset Password</Text>
                                     </TouchableOpacity>
                                 </View>
-                                <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={[ colors.primary_color,  colors.primary_color]} style={styles.buttonContainer} block iconLeft>
-                                    <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() =>this.changePasswordRequest()} >
-                                        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#fff', fontSize: 14 }}>Continue</Text>
-                                    </TouchableOpacity>
-                                </LinearGradient>
 
                                 <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 10, }}>
                                     <View style={{ alignItems: 'center' }}>
-                                        <Text style={{ color: colors.secondary_color, fontFamily: 'Poppins-Medium', fontSize: 12, marginBottom: 7, marginTop: 7 }}>No Need?</Text>
+                                        <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Medium', fontSize: 12, marginBottom: 7, marginTop: 7 }}>Go back to Login Page</Text>
                                     </View>
-                                    <TouchableOpacity onPress={() =>this.props.navigation.navigate('SignUP')} style={{ alignItems: 'center' }}>
-                                        <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 13, marginBottom: 7, marginTop: 7 }}>  Sign In!</Text>
-                                    </TouchableOpacity>
+
                                 </View>
 
 
                             </View>
                         </View>
-
+                        </View>
 
                     </Content>
                 </Container>
@@ -165,19 +189,7 @@ class ForgetPassword extends Component {
 
 }
 
-const mapStateToProps = state => {
-    state.user.user.message =='Successful' ?
-    navigation.navigate('ChangePassword') : null  
-    return {
-        user: state.user
-    }
-}
-const mapDispatchToProps = (dispatch, props) => {
-    return {
-        ForgetPostRequest: (email, token) => dispatch(ForgetPasswordRequest(email, token))
-    }
-}
-export default connect(mapStateToProps, mapDispatchToProps)(ForgetPassword);
+
 
 
 const styles = StyleSheet.create({
@@ -201,19 +213,21 @@ const styles = StyleSheet.create({
         height: 40,
         borderColor: '#3E3E3E',
         marginBottom: 15,
+        borderRadius: 15,
         marginTop: 20,
         paddingLeft: 12,
-        borderBottomWidth: 0.6,
-        borderBottomColor:  colors.primary_color,
+        borderWidth: 0.6,
+        borderColor: colors.primary_color,
     },
     input: {
         flex: 1,
+        justifyContent: 'center',
         marginLeft: 15,
     },
     text_icon: {
         padding: 10,
         borderRightWidth: 0.6,
-        borderRightColor:  colors.primary_color,
+        borderRightColor: colors.primary_color,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -236,10 +250,19 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular'
     },
     buttonContainer: {
+        width: Dimensions.get('window').width / 2,
         height: 50,
         marginRight: 30,
         marginLeft: 30,
         marginTop: 13,
         borderRadius: 15,
+        backgroundColor: colors.primary_color,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
+    logoStyle: {
+        width: Dimensions.get('window').width / 1.3,
+        resizeMode:'contain'
+ 
+     },
 });
