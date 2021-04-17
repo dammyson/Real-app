@@ -11,8 +11,7 @@ import ChangePassword from '../screens/user/ChangePassword';
 import Protected from '../screens/user/Protected';
 import SignUpTwo from '../screens/user/SignUpTwo';
 import { navigationRef } from '../../rootNavigation'
-import NotificationScreen from '../screens/NotificationTab'
-import Update from '../screens/user/Update';
+
 
 
 //console.disableYellowBox = true;
@@ -41,10 +40,8 @@ class AppStack extends Component {
             <Stack.Screen name="SignUpTwo" component={SignUpTwo}  />
             <Stack.Screen name="ForgetPassword" component={ForgetPassword}  />
             <Stack.Screen name="ChangePassword" component={ChangePassword}  />
-            <Stack.Screen name="update" component={Update}  />
             <Stack.Screen name="Protected" component={Protected}  />
-            <Stack.Screen name="NotificationScreen" component={NotificationScreen}  />
-        
+          
           </Stack.Navigator>
         </NavigationContainer>
         </Root>

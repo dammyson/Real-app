@@ -4,7 +4,7 @@ import {
     Text,
     TouchableOpacity,
     TextInput,
-    Platform,
+    Image,
     StyleSheet,
     StatusBar,
     Alert,
@@ -18,9 +18,9 @@ import colors from '../../components/theme/colors'
 import { Container, Content } from 'native-base';
 import Feather from 'react-native-vector-icons/Feather';
 import { useTheme } from 'react-native-paper';
-import { baseUrl, getToken, getUserId, processResponse } from '../../utilities';
+import { getUser } from '../../utilities';
 
-import Users from './user';
+
 
 
 
@@ -35,56 +35,75 @@ export default class Update extends Component {
             confirm_password: '',
             is_valide_mail: false,
             secureTextEntry: true,
-            agree: false
+            agree: false,
+            user:{
+                phoneNumber:'',
+                email:'',
+                address:'',
+                firstName:'',
+                lastName:''
+            }
         };
     }
 
     componentDidMount() {
-       this.getUser()
+        this.getUser()
     }
 
     async getUser() {
-        console.warn(await getToken())
+        this.setState({ user:  JSON.parse(await getUser()) })
+    }
+
+    processReset() {
+        this.setState({ 
+            user: {
+                phoneNumber:'',
+                email:'',
+                address:'',
+                firstName:'',
+                lastName:''
+            }  
+         })
+    }
+
+   async processStepOne() {
+        const { user } = this.state
+
+
+        if (user.address == "" || user.phoneNumber == "" || user.firstName == "" || user.lastName == "" ) {
+            Alert.alert('Validation failed', 'Phone field cannot be empty', [{ text: 'Okay' }])
+            return
+        }
+
+        const formData = new FormData();
+        formData.append('firstName', user.firstName);
+        formData.append('lastName', user.lastName);
+        formData.append('phoneNumber', user.phoneNumber);
+        formData.append('address', user.address);
+       
         this.setState({ loading: true })
-        fetch(baseUrl() + 'users/'+await getUserId(), {
-            method: 'POST', headers: {
+        fetch(baseUrl() + 'users/' + await getUserId(), {
+            method: 'PUT', headers: {
                 'Content-Type': 'application/json',
                 Accept: 'application/json',
-            }, body: JSON.stringify({
-                access_token: await getToken()
-            }),
+                'Authorization': 'Bearer ' + await getToken(),
+            },body: formData,
         })
             .then(processResponse)
             .then(res => {
                 const { statusCode, data } = res;
-                console.warn(statusCode, data )
-            
+                console.warn(statusCode, data)
+                this.props.navigation.goBack()
+                //AsyncStorage.setItem('user',  JSON.stringify(data));
+                this.setState({ user: data })
             }).catch((error) => {
+                this.props.navigation.goBack()
                 this.setState({ loading: false })
                 alert('No Internet Connection. Please Check your network');
             });
-    }
+       
 
-    processStepOne() {
-        const { email, password, confirm_password, is_valide_mail, agree } = this.state
-        if (email == "" || password == "" || password.length < 8) {
-            Alert.alert('Validation failed', 'Phone field cannot be empty', [{ text: 'Okay' }])
-            return
-        }
-        if (!is_valide_mail) {
-            Alert.alert('Validation failed', 'Email is invalid', [{ text: 'Okay' }])
-            return
-        }
-        if (confirm_password != password) {
-            Alert.alert('Validation failed', 'Phone field cannot be empty', [{ text: 'Okay' }])
-            return
-        }
-        if (!agree) {
-            Alert.alert('Validation failed', 'You must accept or termps and conditions', [{ text: 'Okay' }])
-            return
-        }
-        var payload ={ email: email, password: password, confirm_password: confirm_password }
-        this.props.navigation.navigate('SignUpTwo', payload)
+       
     }
 
 
@@ -95,53 +114,49 @@ export default class Update extends Component {
             <View style={styles.container}>
                 <StatusBar backgroundColor='#fff' barStyle="dark-content" />
                 <Container style={{ backgroundColor: 'transparent' }}>
+                    <View style={{ marginHorizontal: 20, height: 60, alignItems: 'flex-start', justifyContent: 'center', marginBottom: 5, }}>
+                        <TouchableOpacity onPress={()=>this.props.navigation.goBack()}>
+                        <Icon
+                            name="arrowleft"
+                            color="black"
+                            size={30}
+                            type='antdesign'
+                        />
+                        </TouchableOpacity>
+                       
+                    </View>
+
                     <Content>
                         <View style={styles.backgroundImage}>
                             <View style={styles.mainbody}>
 
-                                <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', marginBottom: 5, }}>
-                                    <Text style={{ color: colors.primary_color, fontFamily: 'Poppins-Bold', fontSize: 16, marginBottom: 2, marginTop: 2 }}> Account Details</Text>
+                                <View style={{ marginLeft: 20, marginRight: 20, justifyContent: 'center', alignItems: 'center', marginBottom: 5, }}>
+                                    <Image source={{
+                                        uri: 'https://reactnative.dev/img/tiny_logo.png',
+                                    }} style={styles.image_profile} />
+                                    <Text style={{ color: colors.black, fontFamily: 'Poppins-SemiBold', fontSize: 16, }}> Account Details</Text>
+                                    <Text style={{ color: colors.placeholder_color, fontFamily: 'Poppins-Regular', fontSize: 12, }}>Edit Profile</Text>
                                 </View>
 
                                 <View style={styles.textInputContainer}>
-                                    <View style={styles.text_icon}>
-                                        <Icon
-                                            name="email"
-                                            size={20}
-                                            type='entypo'
-                                            color={colors.primary_color}
 
-                                        />
-                                    </View>
 
                                     <View style={styles.input}>
                                         <TextInput
-                                            placeholder="Email "
+                                            placeholder="Address "
                                             placeholderTextColor={colors.placeholder_color}
                                             returnKeyType="next"
                                             keyboardType='email-address'
                                             autoCapitalize="none"
                                             autoCorrect={false}
-                                            defaultValue={this.state.email}
+                                            defaultValue={this.state.user.address}
                                             style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-SemiBold', }}
                                             onSubmitEditing={() => this.passwordInput.focus()}
                                         />
                                     </View>
                                 </View>
 
-                               
-
-                               
                                 <View style={styles.textInputContainer}>
-                                    <View style={styles.text_icon}>
-                                        <Icon
-                                            name="mobile-phone"
-                                            size={23}
-                                            type='font-awesome'
-                                            color={colors.primary_color}
-
-                                        />
-                                    </View>
 
                                     <View style={styles.input}>
                                         <TextInput
@@ -151,8 +166,9 @@ export default class Update extends Component {
                                             keyboardType='default'
                                             autoCapitalize="none"
                                             autoCorrect={false}
+                                            defaultValue={this.state.user.phoneNumber}
                                             style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-SemiBold', }}
-                                            onChangeText={(text) => this.setState({phone: text})}
+                                            onChangeText={(text) => this.setState({ phone: text })}
                                             onSubmitEditing={() => this.fnameInput.focus()}
                                         />
                                     </View>
@@ -160,15 +176,6 @@ export default class Update extends Component {
                                 </View>
 
                                 <View style={styles.textInputContainer}>
-                                    <View style={styles.text_icon}>
-                                        <Icon
-                                            name="user"
-                                            size={20}
-                                            type='entypo'
-                                            color={colors.primary_color}
-
-                                        />
-                                    </View>
 
                                     <View style={styles.input}>
                                         <TextInput
@@ -179,8 +186,9 @@ export default class Update extends Component {
                                             autoCapitalize="none"
                                             autoCorrect={false}
                                             style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-SemiBold', }}
-                                            ref={(input)=> this.fnameInput = input}
-                                            onChangeText={(text) => this.setState({fname: text})}
+                                            ref={(input) => this.fnameInput = input}
+                                            defaultValue={this.state.user.firstName}
+                                            onChangeText={(text) => this.setState({ fname: text })}
                                             onSubmitEditing={() => this.lnameInput.focus()}
 
                                         />
@@ -189,15 +197,7 @@ export default class Update extends Component {
                                 </View>
 
                                 <View style={styles.textInputContainer}>
-                                    <View style={styles.text_icon}>
-                                        <Icon
-                                            name="user"
-                                            size={20}
-                                            type='entypo'
-                                            color={colors.primary_color}
 
-                                        />
-                                    </View>
                                     <View style={styles.input}>
                                         <TextInput
                                             placeholder="Last Name "
@@ -207,18 +207,27 @@ export default class Update extends Component {
                                             autoCapitalize="none"
                                             autoCorrect={false}
                                             style={{ flex: 1, fontSize: 12, color: colors.primary_color, fontFamily: 'Poppins-SemiBold', }}
-                                            ref={(input)=> this.lnameInput = input}
-                                            onChangeText={(text) => this.setState({lname: text})}
+                                            ref={(input) => this.lnameInput = input}
+                                            defaultValue={this.state.user.lastName}
+                                            onChangeText={(text) => this.setState({ lname: text })}
                                             onSubmitEditing={() => this.SignUpRequest()}
                                         />
                                     </View>
                                 </View>
-                             
-                                <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={[colors.primary_color, colors.primary_color]} style={styles.buttonContainer} block iconLeft>
-                                    <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }} onPress={() => this.processStepOne()}>
-                                        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#fff', fontSize: 14 }}>Update</Text>
+
+
+
+                                <View style={{ marginLeft: 20, marginRight: 20, flexDirection: 'row', marginBottom: 1, justifyContent: 'center', }}>
+
+                                    <TouchableOpacity style={styles.buttonContainer} onPress={() => this.processUpdate()} >
+                                        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#fff', fontSize: 14 }}>Save</Text>
                                     </TouchableOpacity>
-                                </LinearGradient>
+
+                                    <TouchableOpacity style={styles.buttonContainer} onPress={() => this.processReset()} >
+                                        <Text style={{ fontFamily: 'Poppins-SemiBold', color: '#fff', fontSize: 14 }}>Reset</Text>
+                                    </TouchableOpacity>
+
+                                </View>
 
 
                             </View>
@@ -243,7 +252,7 @@ const styles = StyleSheet.create({
     },
     backgroundImage: {
         width: Dimensions.get('window').width,
-        height: Dimensions.get('window').height,
+
     },
     mainbody: {
         width: Dimensions.get('window').width,
@@ -254,13 +263,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginRight: 30,
         marginLeft: 30,
-        height: 40,
+        height: 45,
         borderColor: '#3E3E3E',
         marginBottom: 15,
-        marginTop: 20,
+        marginTop: 10,
         paddingLeft: 12,
-        borderBottomWidth: 0.6,
-        borderBottomColor: colors.primary_color,
+        borderWidth: 0.6,
+        borderRadius: 10,
+        borderColor: colors.primary_color,
     },
     input: {
         flex: 1,
@@ -292,11 +302,15 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins-Regular'
     },
     buttonContainer: {
-        height: 50,
+        width: Dimensions.get('window').width / 3,
+        height: 40,
         marginRight: 30,
         marginLeft: 30,
         marginTop: 13,
         borderRadius: 15,
+        backgroundColor: colors.primary_color,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     terms_container: {
         flexDirection: 'row',
@@ -306,5 +320,15 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    image_profile: {
+        width: 120,
+        height: 120,
+        borderRadius: 150,
+        shadowColor: 'gray',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.8,
+        shadowRadius: 1,
+        elevation: 5
     },
 });

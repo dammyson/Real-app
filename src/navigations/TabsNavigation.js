@@ -2,10 +2,10 @@ import React from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 
 
-import Home from '../screens/home';
+import Home from '../screens/home/index';
 import Search from '../screens/search';
-import Profile from '../screens/profile';
-import Setting from '../screens/settings';
+import Profile from '../screens/profile/profile-stack';
+import Setting from '../screens/settings/setting-stack';
 
 import { Icon} from 'react-native-elements'
 import colors from '../components/theme/colors';
@@ -20,8 +20,7 @@ const MainTabScreen = () => (
       initialRouteName="Home"
       activeColor={colors.white}
       inactiveColor='grey'
-      barStyle={{ backgroundColor: colors.primary_color }}
-    >
+      barStyle={{ backgroundColor: colors.primary_color }}>
       <Tab.Screen
         name="Home"
         component={Home}

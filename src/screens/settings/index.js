@@ -78,7 +78,7 @@ export default class index extends React.Component {
               <View style={{ flex: 1, marginLeft: 25, marginRight: 25, }}>
 
 
-                <View style={{ marginTop: 10 }}>
+                <View style={{ marginTop: 30 }}>
                   <Text style={[styles.header_test]}>App Settings</Text>
                 </View>
 
@@ -166,7 +166,6 @@ const styles = StyleSheet.create({
   },
   mainbody: {
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
     flex: 1,
 },
 header_test: {
