@@ -40,9 +40,9 @@ export default class StepOne extends React.Component {
           <View style={styles.actionRegion}>
           <View style={{ flex:1 }}>
             <View style={styles.dotsRegion}>
-              <View style={{ height: 10, width: 32, borderRadius: 10, marginHorizontal: 5, backgroundColor: colors.primary_color }} />
-              <View style={{ height: 10, width: 10, borderRadius: 10, backgroundColor: colors.primary_color }} />
               <View style={{ height: 10, width: 10, borderRadius: 10, marginHorizontal: 5, backgroundColor: colors.primary_color }} />
+              <View style={{ height: 10, width: 10, borderRadius: 10, backgroundColor: colors.primary_color }} />
+              <View style={{ height: 10, width: 32, borderRadius: 10, marginHorizontal: 5, backgroundColor: colors.primary_color }} />
 
             </View>
 

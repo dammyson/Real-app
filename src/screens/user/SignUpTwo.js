@@ -15,7 +15,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Icon } from 'react-native-elements';
 import LottieView from 'lottie-react-native';
 import colors from '../../components/theme/colors'
-import { Container, Content } from 'native-base';
+import { Container, Content, Toast } from 'native-base';
 import { navigation } from '../../../rootNavigation'
 import { connect } from 'react-redux'
 import { RegisterRequest } from '../../actions/userActions'
@@ -83,13 +83,31 @@ class SignUpTwo extends Component {
                     this.setState({ loading: false })
                     setUserId(data.userId)
                     this.props.navigation.navigate('SignIn') 
+                }
+                if (statusCode == 400) {
+                    this.setState({ loading: false })
+                    Toast.show({
+                        text: "Check your details and try again!",
+                        buttonText: "Okay",
+                        position: "top"
+                      })
                 } else {
                     this.setState({ loading: false })
+                    Toast.show({
+                        text: "Check your details and try again!",
+                        buttonText: "Okay",
+                        position: "top"
+                      })
                 }
             }).catch((error) => {
                 this.setState({ loading: false })
                 console.warn(error);
-                alert(error.message);
+                Toast.show({
+                    text: error.message,
+                    buttonText: "Okay",
+                    position: "top"
+                  })
+               
             });
       }
 
