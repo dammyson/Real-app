@@ -48,3 +48,26 @@ export const userActions = {
     CHANGE_PASSWORD_SUCCESS: 'CHANGE_PASSWORD_SUCCESS',
 }
 export const FIXED_STATUSBAR_HEIGHT = 44
+
+
+
+export const font = {
+    BLACK: 'Poppins-Black',
+    BOLD: 'Poppins-Bold',
+    EXTRA_BOLD: 'Poppins-ExtraBold',
+    MEDIUM: 'Poppins-Medium',
+    LIGHT:  'Poppins-Light', 
+    EXTRA_LIGHT:  'Poppins-ExtraLight', 
+    REGULAR: 'Poppins-Regular',
+    SEMI_BOLD: 'Poppins-SemiBold',
+    THIN: 'Poppins-Thin',
+    BLACK_ITALICS: 'Poppins-BlackItalc',
+    BOLD_ITALICS: 'Poppins-BoldItalc',
+    EXTRA_BOLD_ITALICS: 'Poppins-ExtraBoldItalc',
+    MEDIUM_ITALICS: 'Poppins-MediumItalc',
+    LIGHT_ITALICS:  'Poppins-LightItalc', 
+    EXTRA_LIGHT_ITALICS:  'Poppins-ExtraLightItalc', 
+    REGULAR_ITALICS: 'Poppins-RegularItalc',
+    SEMI_BOLD_ITALICS: 'Poppins-SemiBoldItalc',
+    THIN_ITALICS: 'Poppins-ThinItalc',
+}
