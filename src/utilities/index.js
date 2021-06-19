@@ -1,4 +1,5 @@
 import { AsyncStorage } from 'react-native';
+import { showMessage, hideMessage } from "react-native-flash-message";
 
 export const baseUrl = () => {
     return 'https://realhub.herokuapp.com/api/';
@@ -76,6 +77,16 @@ export const processResponse = (response) => {
     statusCode: res[0],
     data: res[1]
   }));
+}
+
+//success, warning, info and danger
+export const showTopNotification = (type, message, duration)=> {
+  showMessage({
+    message: message,
+    type: type,
+    duration: duration*1000,
+    icon: type 
+  });
 }
 
 

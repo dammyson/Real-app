@@ -22,7 +22,7 @@ class AppStack extends Component {
               headerStyle: { backgroundColor: '#7862ff' }, 
               headerShown: false,
              }}
-             initialRouteName="details">
+             initialRouteName="explore">
             <Stack.Screen name="explore" component={Explore}  />
             <Stack.Screen name="viewall" component={ViewAll}  />
             <Stack.Screen name="details" component={Details}  />

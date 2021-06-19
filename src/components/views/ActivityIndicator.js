@@ -20,8 +20,8 @@ const ActivityIndicator = ({ name, message, onPress }) => {
       <StatusBar barStyle="dark-content" hidden={false} backgroundColor="transparent" />
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <View style={styles.welcome}>
-          <BallIndicator color={color.primary_color} size={45} />
-          <Text style={{ color: color.primary_color, fontFamily: 'Poppins-Light', fontSize: 13, marginBottom: 2, marginTop: 2 }}>  loading..</Text>
+          <BallIndicator color={color.primary_color} size={35} />
+          <Text style={{ color: color.primary_color, fontFamily: 'Poppins-Light', fontSize: 10, marginBottom: 2, marginTop: 2 }}>loading...</Text>
         </View>
 
       </View>

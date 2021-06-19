@@ -113,7 +113,7 @@ class AppNavigator extends Component {
         <Tab.Screen navigation={this.props.navigation} name="Explore" component={Home} />
         <Tab.Screen navigation={this.props.navigation} name="Saved" component={Search} />
         <Tab.Screen navigation={this.props.navigation} name="Invest" component={Search} />
-        <Tab.Screen name="Alerts" component={Profile} />
+        <Tab.Screen name="Alerts" component={Search} />
         <Tab.Screen navigation={this.props.navigation} name="Profile" component={Setting} />
       </Tab.Navigator>
 
