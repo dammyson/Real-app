@@ -18,7 +18,8 @@ export default class Details extends Component {
         this.state = {
             loading: true,
             id: this.props.route.params.id,
-            images:[],
+            images: [],
+            facilities: [],
             details: {}
         };
     }
@@ -45,12 +46,14 @@ export default class Details extends Component {
                 this.setState({ loading: false })
                 const { statusCode, data } = res
 
-                console.warn(data.images[0])
+                console.warn(JSON.parse(data.facilities))
+                
                 if (statusCode == 200) {
 
                     this.setState({
                         details: data,
-                        images:data.images
+                        images: data.images,
+                        facilities:  data.facilities
                     })
 
                 } else {
@@ -78,7 +81,7 @@ export default class Details extends Component {
             )
         }
 
-        const { details , images} = this.state
+        const { details, images, facilities } = this.state
 
         return (
             <Container style={{}}>
@@ -87,11 +90,11 @@ export default class Details extends Component {
                     <View style={styles.backgroundImage}>
                         <View style={styles.mainbody}>
 
-                          
+
                             <ImageBackground
                                 style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').width - 100, }}
                                 source={{ uri: images[2] }}
-                                imageStyle={{ borderBottomRightRadius: 50,backgroundColor: 'blue' , borderBottomLeftRadius: 50 }}
+                                imageStyle={{ borderBottomRightRadius: 50, backgroundColor: 'blue', borderBottomLeftRadius: 50 }}
                             >
                                 <View style={{ justifyContent: 'center', width: Dimensions.get('window').width, height: Dimensions.get('window').width, borderBottomRightRadius: 50, borderBottomLeftRadius: 50 }} >
                                     <View style={{ justifyContent: 'center', alignItems: 'center', }} >
@@ -123,73 +126,14 @@ export default class Details extends Component {
 
                             <View style={styles.container}>
                                 <Text numberOfLines={2} style={{ marginRight: 13, marginTop: 37, marginLeft: 13, fontSize: 20, color: '#000', textAlign: 'left', fontFamily: font.SEMI_BOLD }}>₦
-{this.currencyFormat(details.priceSold)}</Text>
+                                    {this.currencyFormat(details.priceSold)}</Text>
                                 <Text numberOfLines={1} style={{ marginRight: 5, marginLeft: 13, fontSize: 18, color: '#000', textAlign: 'left', fontFamily: font.MEDIUM }}>{details.name}</Text>
                                 <Text numberOfLines={1} style={{ marginRight: 5, marginLeft: 20, fontSize: 12, color: '#000', textAlign: 'left', fontFamily: font.REGULAR_ITALICS }}>{details.location}.</Text>
 
-
-                                <View style={{ flexDirection: 'row', marginHorizontal: 10 }}>
-
-
-                                    <View style={[{ flexDirection: 'row', flex: 1, margin: 10, alignItems: 'center', }, styles.boxWithShadow]}>
-                                        <View style={{ margin: 10 }}>
-                                            <Icon
-                                                name="bed-outline"
-                                                color={colors.primary_color}
-                                                size={35}
-                                                type='ionicon'
-                                            />
-                                        </View>
-                                        <Text numberOfLines={1} style={{ marginRight: 5, marginLeft: 13, fontSize: 12, color: '#000', textAlign: 'left', fontFamily: font.REGULAR }}>4 Bedrooms.</Text>
-
-                                    </View>
-                                    <View style={[{ flexDirection: 'row', flex: 1, margin: 10, alignItems: 'center', }, styles.boxWithShadow]}>
-                                        <View style={{ margin: 10 }}>
-                                            <Icon
-                                                name="ruler-square"
-                                                color={colors.primary_color}
-                                                size={35}
-                                                type='material-community'
-                                            />
-                                        </View>
-                                        <Text numberOfLines={1} style={{ marginRight: 5, marginLeft: 13, fontSize: 12, color: '#000', textAlign: 'left', fontFamily: font.REGULAR }}> 1200sqft.</Text>
-
-                                    </View>
+                                <View style={{ marginHorizontal: 10 }}>
+                                  {this.renderGallery(facilities)}
                                 </View>
-
-
-                                <View style={{ flexDirection: 'row', marginHorizontal: 10 }}>
-
-
-                                    <View style={[{ flexDirection: 'row', flex: 1, margin: 10, alignItems: 'center', }, styles.boxWithShadow]}>
-                                        <View style={{ margin: 10 }}>
-                                            <Icon
-                                                name="bathtub"
-                                                color={colors.primary_color}
-                                                size={35}
-                                                type='font-awesome'
-                                            />
-                                        </View>
-                                        <Text numberOfLines={1} style={{ marginRight: 5, marginLeft: 13, fontSize: 12, color: '#000', textAlign: 'left', fontFamily: font.REGULAR }}>3 Bath</Text>
-
-                                    </View>
-                                    <View style={[{ flexDirection: 'row', flex: 1, margin: 10, alignItems: 'center', }, styles.boxWithShadow]}>
-                                        <View style={{ margin: 10 }}>
-                                            <Icon
-                                                name="car-outline"
-                                                color={colors.primary_color}
-                                                size={35}
-                                                type='ionicon'
-                                            />
-                                        </View>
-                                        <Text numberOfLines={1} style={{ marginRight: 5, marginLeft: 13, fontSize: 12, color: '#000', textAlign: 'left', fontFamily: font.REGULAR }}> 2 Parking</Text>
-
-                                    </View>
-                                </View>
-
                                 <Text style={{ marginRight: 5, marginHorizontal: 20, fontSize: 12, color: '#000', textAlign: 'left', fontFamily: font.REGULAR_ITALICS }}>{details.description}</Text>
-
-
 
                                 <View style={{ flexDirection: 'row', margin: 10, marginBottom: 25 }}>
                                     <TouchableOpacity style={styles.buttonContainer} onPress={() => this.loginRequest()} >
@@ -231,9 +175,6 @@ export default class Details extends Component {
                 >
                     <View style={{ justifyContent: 'center', width: Dimensions.get('window').width, height: Dimensions.get('window').width, borderBottomRightRadius: 50, borderBottomLeftRadius: 50 }} >
                         <View style={{ justifyContent: 'center', alignItems: 'center', }} >
-
-
-
                         </View>
                     </View>
                     <TouchableOpacity style={{
@@ -302,6 +243,32 @@ export default class Details extends Component {
         }
         return cat;
     }
+
+
+    renderGallery(data) {
+        return (
+            <View style={styles.table}>
+                {data.map((data, id) => (
+                    <View style={styles.cell} key={id}>
+                        <View style={[{ flexDirection: 'row', flex: 1, margin: 10, alignItems: 'center', }, styles.boxWithShadow]}>
+                            <View style={{ margin: 10 }}>
+                                <Icon
+                                    name="bed-outline"
+                                    color={colors.primary_color}
+                                    size={35}
+                                    type='ionicon'
+                                />
+                            </View>
+                            <Text numberOfLines={1} style={{ marginRight: 5, marginLeft: 13, fontSize: 12, color: '#000', textAlign: 'left', fontFamily: font.REGULAR }}>{data[0]}</Text>
+
+                        </View>
+
+                    </View>
+                ))}
+            </View>
+
+        );
+    }
 }
 
 
@@ -363,4 +330,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    table: {
+        marginTop: 15,
+        flexWrap: 'wrap',
+        flexDirection: 'row'
+    },
+    cell: {
+        flexBasis: '50%',
+        flex: 1,
+    },
+
 });

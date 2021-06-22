@@ -77,6 +77,11 @@ export default class ViewAll extends Component {
             <Container style={{ backgroundColor: "transparent" }}>
                 <StatusBar backgroundColor={"#fff"} barStyle="dark-content" />
                 <Content>
+                    {this.state.dataone.length==0 ? 
+                    <View style={{}}>
+                        
+                    </View>
+                    : 
                     <View style={styles.backgroundImage}>
                         <View style={styles.mainbody}>
                             <View style={{ marginHorizontal: 20, marginTop: 25, justifyContent: 'center', }}>
@@ -168,7 +173,7 @@ export default class ViewAll extends Component {
 
                         </View>
 
-                    </View>
+                    </View> }
                 </Content>
             </Container>
         )
